@@ -182,7 +182,7 @@ const loading = ref(true)
 const expanded = ref(new Set())
 
 onMounted(async () => {
-  const [mr, pr] = await Promise.all([fetch('./data/matches.json'), fetch('./data/players.json')])
+  const [mr, pr] = await Promise.all([fetch(import.meta.env.BASE_URL + 'data/matches.json'), fetch(import.meta.env.BASE_URL + 'data/players.json')])
   matches.value = await mr.json()
   players.value = await pr.json()
   loading.value = false

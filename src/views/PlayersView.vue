@@ -66,7 +66,7 @@ const players = ref([])
 const loading = ref(true)
 
 onMounted(async () => {
-  const res = await fetch('./data/players.json')
+  const res = await fetch(import.meta.env.BASE_URL + 'data/players.json')
   const all = await res.json()
   players.value = all.sort((a, b) => {
     const pa = a.games?.reduce((s, g) => s + (g.pts ?? 0), 0) / (a.games?.length || 1)

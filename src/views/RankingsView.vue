@@ -56,7 +56,7 @@ const loading = ref(true)
 const players = ref([])
 
 onMounted(async () => {
-  const res = await fetch('./data/players.json')
+  const res = await fetch(import.meta.env.BASE_URL + 'data/players.json')
   players.value = await res.json()
   loading.value = false
 })

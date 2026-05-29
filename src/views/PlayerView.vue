@@ -219,7 +219,7 @@ const tab = ref('avg')
 
 async function load() {
   loading.value = true
-  const res = await fetch('./data/players.json')
+  const res = await fetch(import.meta.env.BASE_URL + 'data/players.json')
   const all = await res.json()
   player.value = all.find(p => p.id === route.params.id) ?? null
   loading.value = false
@@ -297,7 +297,7 @@ function total(key) {
 }
 const matchLabels = {}
 onMounted(async () => {
-  const mr = await fetch('./data/matches.json')
+  const mr = await fetch(import.meta.env.BASE_URL + 'data/matches.json')
   const ms = await mr.json()
   ms.forEach(m => { matchLabels[m.id] = m.label || m.id })
 })
