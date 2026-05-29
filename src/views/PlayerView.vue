@@ -1,9 +1,9 @@
 <template>
   <div class="page">
-    <RouterLink class="back-link" to="/players">← 球员列表</RouterLink>
+    <RouterLink class="back-link" to="/players">{{ t('back_link') }}</RouterLink>
 
-    <div v-if="loading" class="loading">Loading...</div>
-    <div v-else-if="!player" class="empty">球员不存在</div>
+    <div v-if="loading" class="loading">{{ t('loading') }}</div>
+    <div v-else-if="!player" class="empty">{{ t('no_player') }}</div>
 
     <template v-else>
       <!-- NBA-style hero -->
@@ -11,13 +11,13 @@
         <div class="ph-top">
           <!-- left: name + tags -->
           <div class="ph-left">
-            <div class="ph-team-line">HoopStats · 球员档案</div>
+            <div class="ph-team-line">{{ t('ph_subtitle') }}</div>
             <div class="ph-name">{{ player.name }}</div>
             <div class="ph-tags">
               <span class="ph-tag pos">{{ player.position }}</span>
               <span v-if="player.height" class="ph-tag">{{ player.height }}</span>
               <span v-if="player.weight" class="ph-tag">{{ player.weight }}</span>
-              <span class="ph-tag">{{ player.games.length }} 场出场</span>
+              <span class="ph-tag">{{ player.games.length }} {{ t('stat_appearances') }}</span>
               <span v-for="tag in player.tags" :key="tag" class="ph-tag player-tag">{{ tag }}</span>
             </div>
           </div>
@@ -33,21 +33,21 @@
             <div class="phs-num">{{ avg('pts') }}</div>
             <div class="phs-meta">
               <div class="phs-abbr">PPG</div>
-              <div class="phs-label">场均得分</div>
+              <div class="phs-label">{{ t('phs_ppg') }}</div>
             </div>
           </div>
           <div class="phs">
             <div class="phs-num">{{ avg('reb') }}</div>
             <div class="phs-meta">
               <div class="phs-abbr">RPG</div>
-              <div class="phs-label">场均篮板</div>
+              <div class="phs-label">{{ t('phs_rpg') }}</div>
             </div>
           </div>
           <div class="phs">
             <div class="phs-num">{{ avg('ast') }}</div>
             <div class="phs-meta">
               <div class="phs-abbr">APG</div>
-              <div class="phs-label">场均助攻</div>
+              <div class="phs-label">{{ t('phs_apg') }}</div>
             </div>
           </div>
         </div>
@@ -55,41 +55,41 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <button class="tab" :class="{ active: tab === 'avg' }"   @click="tab = 'avg'">总体平均</button>
-        <button class="tab" :class="{ active: tab === 'games' }" @click="tab = 'games'">比赛数据</button>
-        <button class="tab" :class="{ active: tab === 'info' }"  @click="tab = 'info'">资料</button>
+        <button class="tab" :class="{ active: tab === 'avg' }"   @click="tab = 'avg'">{{ t('tab_avg') }}</button>
+        <button class="tab" :class="{ active: tab === 'games' }" @click="tab = 'games'">{{ t('tab_games') }}</button>
+        <button class="tab" :class="{ active: tab === 'info' }"  @click="tab = 'info'">{{ t('tab_info') }}</button>
       </div>
 
       <!-- 总体平均 -->
       <div v-if="tab === 'avg'">
-        <div class="stats-section-label">基础数据</div>
+        <div class="stats-section-label">{{ t('basic_data') }}</div>
         <div class="avg-grid">
-          <div class="avg-item"><div class="ag-abbr">PTS</div><div class="ag-num">{{ avg('pts') }}</div><div class="ag-desc">得分</div></div>
-          <div class="avg-item"><div class="ag-abbr">REB</div><div class="ag-num">{{ avg('reb') }}</div><div class="ag-desc">篮板</div></div>
-          <div class="avg-item"><div class="ag-abbr">AST</div><div class="ag-num">{{ avg('ast') }}</div><div class="ag-desc">助攻</div></div>
-          <div class="avg-item"><div class="ag-abbr">STL</div><div class="ag-num">{{ avg('stl') }}</div><div class="ag-desc">抢断</div></div>
-          <div class="avg-item"><div class="ag-abbr">BLK</div><div class="ag-num">{{ avg('blk') }}</div><div class="ag-desc">盖帽</div></div>
-          <div class="avg-item"><div class="ag-abbr">TOV</div><div class="ag-num">{{ avg('tov') }}</div><div class="ag-desc">失误</div></div>
-          <div class="avg-item"><div class="ag-abbr">OREB</div><div class="ag-num">{{ avg('oreb') }}</div><div class="ag-desc">进攻篮板</div></div>
-          <div class="avg-item"><div class="ag-abbr">DREB</div><div class="ag-num">{{ avgDreb() }}</div><div class="ag-desc">防守篮板</div></div>
+          <div class="avg-item"><div class="ag-abbr">PTS</div><div class="ag-num">{{ avg('pts') }}</div><div class="ag-desc">{{ t('d_pts') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">REB</div><div class="ag-num">{{ avg('reb') }}</div><div class="ag-desc">{{ t('d_reb') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">AST</div><div class="ag-num">{{ avg('ast') }}</div><div class="ag-desc">{{ t('d_ast') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">STL</div><div class="ag-num">{{ avg('stl') }}</div><div class="ag-desc">{{ t('d_stl') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">BLK</div><div class="ag-num">{{ avg('blk') }}</div><div class="ag-desc">{{ t('d_blk') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">TOV</div><div class="ag-num">{{ avg('tov') }}</div><div class="ag-desc">{{ t('d_tov') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">OREB</div><div class="ag-num">{{ avg('oreb') }}</div><div class="ag-desc">{{ t('d_oreb') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">DREB</div><div class="ag-num">{{ avgDreb() }}</div><div class="ag-desc">{{ t('d_dreb') }}</div></div>
         </div>
-        <div class="stats-section-label" style="margin-top:24px">高阶数据</div>
+        <div class="stats-section-label" style="margin-top:24px">{{ t('adv_shooting') }}</div>
         <div class="avg-grid">
-          <div class="avg-item"><div class="ag-abbr">FG%</div><div class="ag-num">{{ avgFgPct() }}</div><div class="ag-desc">投篮命中率</div></div>
-          <div class="avg-item"><div class="ag-abbr">2P%</div><div class="ag-num">{{ avgFg2Pct() }}</div><div class="ag-desc">两分命中率</div></div>
-          <div class="avg-item"><div class="ag-abbr">3P%</div><div class="ag-num">{{ avgFg3Pct() }}</div><div class="ag-desc">三分命中率</div></div>
-          <div class="avg-item"><div class="ag-abbr">eFG%</div><div class="ag-num">{{ avgEfgPct() }}</div><div class="ag-desc">有效命中率</div></div>
-          <div class="avg-item"><div class="ag-abbr">FGM</div><div class="ag-num">{{ avg('fgm') }}</div><div class="ag-desc">投篮命中</div></div>
-          <div class="avg-item"><div class="ag-abbr">FGA</div><div class="ag-num">{{ avg('fga') }}</div><div class="ag-desc">投篮出手</div></div>
-          <div class="avg-item"><div class="ag-abbr">3PM</div><div class="ag-num">{{ avg('fg3m') }}</div><div class="ag-desc">三分命中</div></div>
-          <div class="avg-item"><div class="ag-abbr">3PA</div><div class="ag-num">{{ avg('fg3a') }}</div><div class="ag-desc">三分出手</div></div>
+          <div class="avg-item"><div class="ag-abbr">FG%</div><div class="ag-num">{{ avgFgPct() }}</div><div class="ag-desc">{{ t('d_fgpct') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">2P%</div><div class="ag-num">{{ avgFg2Pct() }}</div><div class="ag-desc">{{ t('d_fg2pct') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">3P%</div><div class="ag-num">{{ avgFg3Pct() }}</div><div class="ag-desc">{{ t('d_fg3pct') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">eFG%</div><div class="ag-num">{{ avgEfgPct() }}</div><div class="ag-desc">{{ t('d_efgpct') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">FGM</div><div class="ag-num">{{ avg('fgm') }}</div><div class="ag-desc">{{ t('d_fgm') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">FGA</div><div class="ag-num">{{ avg('fga') }}</div><div class="ag-desc">{{ t('d_fga') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">3PM</div><div class="ag-num">{{ avg('fg3m') }}</div><div class="ag-desc">{{ t('d_3pm') }}</div></div>
+          <div class="avg-item"><div class="ag-abbr">3PA</div><div class="ag-num">{{ avg('fg3a') }}</div><div class="ag-desc">{{ t('d_3pa') }}</div></div>
         </div>
 
         <!-- 进阶数据 panel -->
         <div class="gc-adv" style="margin-top:24px">
           <div class="gc-adv-header">
-            <span class="gc-adv-title">进阶数据</span>
-            <a class="gc-adv-link" href="https://www.basketball-reference.com/about/glossary.html" target="_blank" rel="noopener noreferrer">指标说明 &nearr;</a>
+            <span class="gc-adv-title">{{ t('adv_section') }}</span>
+            <a class="gc-adv-link" href="https://www.basketball-reference.com/about/glossary.html" target="_blank" rel="noopener noreferrer">{{ t('glossary_link') }} &nearr;</a>
           </div>
           <div class="gc-adv-row" style="grid-template-columns:repeat(3,1fr)">
             <div v-for="s in playerAdvStats()" :key="s.abbr" class="gc-adv-stat">
@@ -101,7 +101,7 @@
         </div>
 
         <!-- 总数据 -->
-        <div class="stats-section-label" style="margin-top:24px">生涯总数据</div>
+        <div class="stats-section-label" style="margin-top:24px">{{ t('career_totals') }}</div>
         <div class="totals-table-wrap">
           <table class="totals-table">
             <thead>
@@ -130,7 +130,7 @@
           </table>
         </div>
 
-        <div class="sub-note">场均数据 · {{ player.games.length }} 场出场</div>
+        <div class="sub-note">{{ t('sub_note_pre') }} {{ player.games.length }} {{ t('sub_note_suf') }}</div>
       </div>
 
       <!-- 比赛数据 -->
@@ -139,7 +139,7 @@
           <table class="g-table">
             <thead>
               <tr>
-                <th>比赛</th>
+                <th>{{ t('g_th_match') }}</th>
                 <th>PTS</th><th>REB</th><th>OREB</th><th>AST</th>
                 <th>STL</th><th>BLK</th><th>TOV</th>
                 <th>FGM</th><th>FGA</th><th>FG%</th>
@@ -148,7 +148,7 @@
             </thead>
             <tbody>
               <tr v-for="g in [...player.games].reverse()" :key="g.match_id">
-                <td>{{ matchLabel(g.match_id) }}</td>
+              <td>{{ matchLabel(g.match_id) }}</td>
                 <td class="g-pts">{{ g.pts }}</td>
                 <td>{{ g.reb }}</td>
                 <td>{{ g.oreb ?? '-' }}</td>
@@ -168,34 +168,34 @@
       <!-- 资料 -->
       <div v-if="tab === 'info'">
         <div class="info-grid">
-          <div class="ig-item"><span class="ig-key">姓名</span><span class="ig-val">{{ player.name }}</span></div>
-          <div class="ig-item"><span class="ig-key">球衣号码</span><span class="ig-val">#{{ player.number }}</span></div>
-          <div class="ig-item"><span class="ig-key">位置</span><span class="ig-val">{{ player.position }}</span></div>
-          <div class="ig-item"><span class="ig-key">出场场次</span><span class="ig-val">{{ player.games.length }} 场</span></div>
-          <div class="ig-item"><span class="ig-key">身高</span><span class="ig-val">{{ player.height || '—' }}</span></div>
-          <div class="ig-item"><span class="ig-key">体重</span><span class="ig-val">{{ player.weight || '—' }}</span></div>
-          <div class="ig-item"><span class="ig-key">臂展</span><span class="ig-val">{{ player.wingspan || '—' }}</span></div>
-          <div class="ig-item"><span class="ig-key">站立摸高</span><span class="ig-val">{{ player.standing_reach || '—' }}</span></div>
-          <div class="ig-item"><span class="ig-key">加入时间</span><span class="ig-val">{{ player.joined || '—' }}</span></div>
-          <div class="ig-item"><span class="ig-key">母校</span><span class="ig-val">{{ player.school || '—' }}</span></div>
-          <div class="ig-item"><span class="ig-key">偶像</span><span class="ig-val">{{ player.idol || '—' }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_name') }}</span><span class="ig-val">{{ player.name }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_number') }}</span><span class="ig-val">#{{ player.number }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_pos') }}</span><span class="ig-val">{{ player.position }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_games') }}</span><span class="ig-val">{{ player.games.length }} {{ t('games_suffix') }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_height') }}</span><span class="ig-val">{{ player.height || '—' }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_weight') }}</span><span class="ig-val">{{ player.weight || '—' }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_wingspan') }}</span><span class="ig-val">{{ player.wingspan || '—' }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_reach') }}</span><span class="ig-val">{{ player.standing_reach || '—' }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_joined') }}</span><span class="ig-val">{{ player.joined || '—' }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_school') }}</span><span class="ig-val">{{ player.school || '—' }}</span></div>
+          <div class="ig-item"><span class="ig-key">{{ t('info_idol') }}</span><span class="ig-val">{{ player.idol || '—' }}</span></div>
         </div>
         <template v-if="player.mold">
-          <div class="stats-section-label" style="margin-top:24px">模版</div>
+          <div class="stats-section-label" style="margin-top:24px">{{ t('sec_mold') }}</div>
           <div class="mold-card">
             <span class="mold-icon">🏀</span>
             <span class="mold-name">{{ player.mold }}</span>
           </div>
         </template>
         <template v-if="player.contract">
-          <div class="stats-section-label" style="margin-top:24px">合同</div>
+          <div class="stats-section-label" style="margin-top:24px">{{ t('sec_contract') }}</div>
           <div class="contract-card">
             <span class="contract-icon">📋</span>
             <span class="contract-text">{{ player.contract }}</span>
           </div>
         </template>
         <template v-if="player.honors?.length">
-          <div class="stats-section-label" style="margin-top:24px">荣誉</div>
+          <div class="stats-section-label" style="margin-top:24px">{{ t('sec_honors') }}</div>
           <div class="honors-list">
             <div v-for="(h, i) in player.honors" :key="i" class="honor-item">
               <span class="honor-star">🏆</span> {{ h }}
@@ -210,6 +210,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
+import { t } from '../i18n.js'
 
 const route  = useRoute()
 const player = ref(null)
@@ -280,12 +281,12 @@ function playerAdvStats() {
   const orbp = miss ? (oreb / miss * 100).toFixed(1) + '%' : '-'
   const def  = (sum('stl') + sum('blk')) / gs.length
   return [
-    { abbr: 'eFG%',  val: efg,              label: '有效投篮率',   tip: 'eFG% — 修正三分球价值：(FGM+0.5×FG3M)/FGA' },
-    { abbr: 'AST/TOV', val: atr,            label: '助攻失误比',   tip: 'AST/TOV — 助攻与失误的比值，越高越好' },
-    { abbr: '3P Rate', val: r3,             label: '三分出手率',   tip: '三分出手占总投篮比例 = 3PA / FGA' },
-    { abbr: 'Pts/FGA', val: pefa,           label: '得分效率',     tip: '每次出手得分 = PTS / FGA' },
-    { abbr: 'OREB%', val: orbp,             label: '进攻篮板率',   tip: 'OREB% = 进攻篮板 / 自身投篮未中次数' },
-    { abbr: 'Def',   val: def.toFixed(1),   label: '综合防守/场',  tip: '场均抢断 + 盖帽合计' },
+    { abbr: 'eFG%',    val: efg,              label: t('pa_efg'),    tip: t('pa_efg_tip') },
+    { abbr: 'AST/TOV', val: atr,              label: t('pa_asttov'), tip: t('pa_asttov_tip') },
+    { abbr: '3P Rate', val: r3,               label: t('pa_3prate'), tip: t('pa_3prate_tip') },
+    { abbr: 'Pts/FGA', val: pefa,             label: t('pa_ptsfga'), tip: t('pa_ptsfga_tip') },
+    { abbr: 'OREB%',   val: orbp,             label: t('pa_orebp'),  tip: t('pa_orebp_tip') },
+    { abbr: 'Def',     val: def.toFixed(1),   label: t('pa_def'),    tip: t('pa_def_tip') },
   ]
 }
 

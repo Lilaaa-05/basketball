@@ -1,9 +1,9 @@
 <template>
   <div class="page">
-    <div class="section-header">球员名单</div>
+    <div class="section-header">{{ t('players_title') }}</div>
 
-    <div v-if="loading" class="loading">Loading...</div>
-    <div v-else-if="!players.length" class="empty">暂无球员数据</div>
+    <div v-if="loading" class="loading">{{ t('loading') }}</div>
+    <div v-else-if="!players.length" class="empty">{{ t('no_players') }}</div>
 
     <div v-else class="roster-grid">
       <div
@@ -26,30 +26,30 @@
           <div class="rc-profile">
             <div class="rc-pi">
               <span class="rc-pv">{{ p.height || '-' }}</span>
-              <span class="rc-pl">身高</span>
+              <span class="rc-pl">{{ t('rc_height') }}</span>
             </div>
             <div class="rc-pi">
               <span class="rc-pv">{{ p.weight || '-' }}</span>
-              <span class="rc-pl">体重</span>
+              <span class="rc-pl">{{ t('rc_weight') }}</span>
             </div>
             <div class="rc-pi">
               <span class="rc-pv">{{ p.games?.length ?? 0 }}</span>
-              <span class="rc-pl">出场</span>
+              <span class="rc-pl">{{ t('rc_games') }}</span>
             </div>
           </div>
 
           <div class="rc-stats">
             <div class="rc-stat">
               <span class="rc-sv">{{ avg(p, 'pts') }}</span>
-              <span class="rc-sl">得分</span>
+              <span class="rc-sl">{{ t('rc_pts') }}</span>
             </div>
             <div class="rc-stat">
               <span class="rc-sv">{{ avg(p, 'reb') }}</span>
-              <span class="rc-sl">篮板</span>
+              <span class="rc-sl">{{ t('rc_reb') }}</span>
             </div>
             <div class="rc-stat">
               <span class="rc-sv">{{ avg(p, 'ast') }}</span>
-              <span class="rc-sl">助攻</span>
+              <span class="rc-sl">{{ t('rc_ast') }}</span>
             </div>
           </div>
         </div>
@@ -60,6 +60,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { t } from '../i18n.js'
 
 const players = ref([])
 const loading = ref(true)

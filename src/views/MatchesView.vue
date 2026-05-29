@@ -1,9 +1,9 @@
 <template>
   <div class="page">
-    <div class="section-header">比赛记录</div>
+    <div class="section-header">{{ t('matches_title') }}</div>
 
-    <div v-if="loading" class="loading">Loading...</div>
-    <div v-else-if="!matches.length" class="empty">暂无比赛记录</div>
+    <div v-if="loading" class="loading">{{ t('loading') }}</div>
+    <div v-else-if="!matches.length" class="empty">{{ t('no_data') }}</div>
 
     <div v-else class="gc-wrap">
       <div v-for="m in matches" :key="m.id" class="gc">
@@ -73,11 +73,25 @@
         <Transition name="slide">
           <div v-if="expanded.has(m.id)" class="gc-box">
 
+            <!-- team basic stats -->
+            <div class="gc-basic">
+              <div class="gc-adv-header">
+                <span class="gc-adv-title">{{ t('match_basic') }} &middot; {{ m.team_a.name }}</span>
+              </div>
+              <div class="gc-adv-row">
+                <div v-for="s in teamBasicStats(m)" :key="s.abbr" class="gc-adv-stat">
+                  <div class="gc-adv-abbr">{{ s.abbr }}</div>
+                  <div class="gc-adv-val">{{ s.val }}</div>
+                  <div class="gc-adv-desc">{{ s.label }}</div>
+                </div>
+              </div>
+            </div>
+
             <!-- advanced stats -->
             <div class="gc-adv">
               <div class="gc-adv-header">
-                <span class="gc-adv-title">进阶数据 &middot; {{ m.team_a.name }}</span>
-                <a class="gc-adv-link" href="https://www.basketball-reference.com/about/glossary.html" target="_blank" rel="noopener noreferrer">指标说明 &nearr;</a>
+                <span class="gc-adv-title">{{ t('adv_section') }} &middot; {{ m.team_a.name }}</span>
+                <a class="gc-adv-link" href="https://www.basketball-reference.com/about/glossary.html" target="_blank" rel="noopener noreferrer">{{ t('glossary_link') }} &nearr;</a>
               </div>
               <div class="gc-adv-row">
                 <div v-for="s in advStats(m)" :key="s.abbr" class="gc-adv-stat">
@@ -86,14 +100,14 @@
                   <div class="gc-adv-desc">{{ s.label }}</div>
                 </div>
               </div>
-              <div class="gc-adv-note">★ 回合数估算公式：出手数 &minus; 进攻篮板 + 失误（未计罚球）</div>
+              <div class="gc-adv-note">★ {{ t('adv_note') }}</div>
             </div>
             <!-- team A -->
             <div class="gc-box-team-label">{{ m.team_a.name }}</div>
             <table class="gc-box-table">
               <thead>
                 <tr>
-                  <th>球员</th>
+                  <th>{{ t('match_th_player') }}</th>
                   <th>MIN</th><th>PTS</th><th>REB</th><th>AST</th>
                   <th>BLK</th><th>STL</th><th>TOV</th>
                   <th>FGM</th><th>FGA</th><th>FG%</th>
@@ -124,7 +138,7 @@
             <table class="gc-box-table">
               <thead>
                 <tr>
-                  <th>球员</th>
+                  <th>{{ t('match_th_player') }}</th>
                   <th>MIN</th><th>PTS</th><th>REB</th><th>AST</th>
                   <th>BLK</th><th>STL</th><th>TOV</th>
                   <th>FGM</th><th>FGA</th><th>FG%</th>
@@ -160,6 +174,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { t } from '../i18n.js'
 
 const matches = ref([])
 const players = ref([])
@@ -209,6 +224,36 @@ function topScorers(match, n = 5) {
     .slice(0, n)
 }
 
+function teamBasicStats(match) {
+  const pids = match.team_a?.players ?? []
+  let reb = 0, ast = 0, stl = 0, blk = 0, tov = 0, fgm = 0, fga = 0, fg3m = 0, fg3a = 0
+  for (const pid of pids) {
+    const g = fp(pid)?.games?.find(g => g.match_id === match.id)
+    if (!g) continue
+    reb  += g.reb  ?? 0
+    ast  += g.ast  ?? 0
+    stl  += g.stl  ?? 0
+    blk  += g.blk  ?? 0
+    tov  += g.tov  ?? 0
+    fgm  += g.fgm  ?? 0
+    fga  += g.fga  ?? 0
+    fg3m += g.fg3m ?? 0
+    fg3a += g.fg3a ?? 0
+  }
+  const fgPct  = fga  ? (fgm  / fga  * 100).toFixed(1) + '%' : '-'
+  const fg3Pct = fg3a ? (fg3m / fg3a * 100).toFixed(1) + '%' : '-'
+  return [
+    { abbr: 'PTS', val: match.team_a.score, label: t('d_pts') },
+    { abbr: 'REB', val: reb,   label: t('d_reb') },
+    { abbr: 'AST', val: ast,   label: t('d_ast') },
+    { abbr: 'STL', val: stl,   label: t('d_stl') },
+    { abbr: 'BLK', val: blk,   label: t('d_blk') },
+    { abbr: 'TOV', val: tov,   label: t('d_tov') },
+    { abbr: 'FG%', val: fgPct, label: t('d_fgpct') },
+    { abbr: '3P%', val: fg3Pct, label: t('d_fg3pct') },
+  ]
+}
+
 function advStats(match) {
   const pids = match.team_a?.players ?? []
   let fgm = 0, fga = 0, fg3m = 0, oreb = 0, tov = 0
@@ -232,12 +277,12 @@ function advStats(match) {
   const miss = fga - fgm
   const orbp = miss ? +(oreb / miss * 100).toFixed(1) : 0
   return [
-    { abbr: 'ORtg',  val: ort,                         label: '进攻效率',   cls: '',                             tip: '进攻效率 — 每100回合得分，衡量进攻端产出效率' },
-    { abbr: 'DRtg',  val: drt,                         label: '防守效率',   cls: '',                             tip: '防守效率 — 每100回合失分，数字越低越好' },
-    { abbr: 'Net',   val: (net >= 0 ? '+' : '') + net, label: '净效率',     cls: net > 0 ? 'adv-pos' : net < 0 ? 'adv-neg' : '', tip: '净效率 — 进攻效率−防守效率，正数代表优势' },
-    { abbr: 'eFG%',  val: efg + '%',                   label: '有效投篮率', cls: '',                             tip: 'eFG% — 修正三分球更高价值：(FGM+0.5×FG3M)/FGA' },
-    { abbr: 'TOV%',  val: tovp + '%',                  label: '失误率',     cls: '',                             tip: 'TOV% — 失误占估算回合数的百分比' },
-    { abbr: 'OREB%', val: orbp + '%',                  label: '进攻篮板率', cls: '',                             tip: 'OREB% — 进攻篮板 / 投篮未中次数，衡量二次进攻能力' },
+    { abbr: 'ORtg',  val: ort,                         cls: '',                                              label: t('adv_ort'),  tip: t('adv_ort_tip') },
+    { abbr: 'DRtg',  val: drt,                         cls: '',                                              label: t('adv_drt'),  tip: t('adv_drt_tip') },
+    { abbr: 'Net',   val: (net >= 0 ? '+' : '') + net, cls: net > 0 ? 'adv-pos' : net < 0 ? 'adv-neg' : '', label: t('adv_net'),  tip: t('adv_net_tip') },
+    { abbr: 'eFG%',  val: efg + '%',                   cls: '',                                              label: t('adv_efg'),  tip: t('adv_efg_tip') },
+    { abbr: 'TOV%',  val: tovp + '%',                  cls: '',                                              label: t('adv_tov'),  tip: t('adv_tov_tip') },
+    { abbr: 'OREB%', val: orbp + '%',                  cls: '',                                              label: t('adv_oreb'), tip: t('adv_oreb_tip') },
   ]
 }
 </script>
