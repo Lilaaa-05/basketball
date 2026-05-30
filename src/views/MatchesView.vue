@@ -42,13 +42,23 @@
                 <span class="gc-mvp-name">{{ playerName(m.mvp) }}</span>
               </div>
               <div v-else></div>
-              <button
-                class="gc-expand-btn"
-                :class="{ active: expanded.has(m.id) }"
-                @click="toggle(m.id)"
-              >
-                Box Score <span class="gc-expand-arrow">▾</span>
-              </button>
+              <div class="gc-footer-actions">
+                <button
+                  v-if="hasVideo(m)"
+                  class="gc-expand-btn"
+                  :class="{ active: videoExpanded.has(m.id) }"
+                  @click="toggleVideo(m.id)"
+                >
+                  {{ t('match_watch_video') }} <span class="gc-expand-arrow">▾</span>
+                </button>
+                <button
+                  class="gc-expand-btn"
+                  :class="{ active: expanded.has(m.id) }"
+                  @click="toggle(m.id)"
+                >
+                  Box Score <span class="gc-expand-arrow">▾</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -68,6 +78,21 @@
             </div>
           </div>
         </div>
+
+        <!-- match video -->
+        <Transition name="slide">
+          <div v-if="videoExpanded.has(m.id) && hasVideo(m)" class="gc-video">
+            <div class="gc-video-wrap">
+              <iframe
+                :src="'https://www.youtube.com/embed/' + youtubeId(m.videoUrl)"
+                :title="m.label + ' video'"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin"
+              />
+            </div>
+          </div>
+        </Transition>
 
         <!-- box score: full width -->
         <Transition name="slide">
@@ -180,6 +205,7 @@ const matches = ref([])
 const players = ref([])
 const loading = ref(true)
 const expanded = ref(new Set())
+const videoExpanded = ref(new Set())
 
 onMounted(async () => {
   const [mr, pr] = await Promise.all([fetch(import.meta.env.BASE_URL + 'data/matches.json'), fetch(import.meta.env.BASE_URL + 'data/players.json')])
@@ -192,6 +218,40 @@ function toggle(id) {
   const s = new Set(expanded.value)
   s.has(id) ? s.delete(id) : s.add(id)
   expanded.value = s
+}
+
+function toggleVideo(id) {
+  const s = new Set(videoExpanded.value)
+  s.has(id) ? s.delete(id) : s.add(id)
+  videoExpanded.value = s
+}
+
+function youtubeId(url) {
+  if (!url || typeof url !== 'string') return null
+  const u = url.trim()
+  try {
+    const parsed = new URL(u)
+    const host = parsed.hostname.replace(/^www\./, '')
+    if (host === 'youtu.be') {
+      const id = parsed.pathname.slice(1).split('/')[0]
+      return id || null
+    }
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      if (parsed.pathname.startsWith('/embed/')) {
+        const id = parsed.pathname.slice(7).split('/')[0]
+        return id || null
+      }
+      const v = parsed.searchParams.get('v')
+      return v || null
+    }
+  } catch {
+    return null
+  }
+  return null
+}
+
+function hasVideo(m) {
+  return !!youtubeId(m?.videoUrl)
 }
 
 const fp = id => players.value.find(p => p.id === id)
