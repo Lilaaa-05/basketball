@@ -59,6 +59,7 @@
         <button class="tab" :class="{ active: tab === 'avg' }"   @click="tab = 'avg'">{{ t('tab_avg') }}</button>
         <button class="tab" :class="{ active: tab === 'games' }" @click="tab = 'games'">{{ t('tab_games') }}</button>
         <button class="tab" :class="{ active: tab === 'info' }"  @click="tab = 'info'">{{ t('tab_info') }}</button>
+        <button class="tab tab-p48" :class="{ active: per48 }" @click="per48 = !per48">P/48</button>
       </div>
 
       <!-- 总体平均 -->
@@ -150,14 +151,14 @@
             <tbody>
               <tr v-for="g in [...player.games].reverse()" :key="g.match_id">
               <td>{{ matchLabel(g.match_id) }}</td>
-                <td class="g-pts">{{ g.pts }}</td>
-                <td>{{ g.reb }}</td>
-                <td>{{ g.oreb ?? '-' }}</td>
-                <td>{{ g.ast }}</td>
-                <td>{{ g.stl }}</td><td>{{ g.blk }}</td><td>{{ g.tov }}</td>
-                <td>{{ g.fgm }}</td><td>{{ g.fga }}</td>
+                <td class="g-pts">{{ p48(g.pts) }}</td>
+                <td>{{ p48(g.reb) }}</td>
+                <td>{{ g.oreb != null ? p48(g.oreb) : '-' }}</td>
+                <td>{{ p48(g.ast) }}</td>
+                <td>{{ p48(g.stl) }}</td><td>{{ p48(g.blk) }}</td><td>{{ p48(g.tov) }}</td>
+                <td>{{ p48(g.fgm) }}</td><td>{{ p48(g.fga) }}</td>
                 <td>{{ g.fga ? (g.fgm / g.fga * 100).toFixed(0) + '%' : '-' }}</td>
-                <td>{{ g.fg3m }}</td><td>{{ g.fg3a }}</td>
+                <td>{{ p48(g.fg3m) }}</td><td>{{ p48(g.fg3a) }}</td>
                 <td>{{ g.fg3a ? (g.fg3m / g.fg3a * 100).toFixed(0) + '%' : '-' }}</td>
                 <td>{{ g.fga ? ((g.fgm + 0.5 * g.fg3m) / g.fga * 100).toFixed(0) + '%' : '-' }}</td>
               </tr>
@@ -218,6 +219,12 @@ const route  = useRoute()
 const player = ref(null)
 const loading = ref(true)
 const tab = ref('avg')
+const per48 = ref(false)
+
+function p48(val) {
+  if (val == null) return '-'
+  return per48.value ? val * 2 : val
+}
 
 async function load() {
   loading.value = true
@@ -232,7 +239,8 @@ watch(() => route.params.id, load)
 function avg(key) {
   const gs = player.value?.games
   if (!gs?.length) return '-'
-  return (gs.reduce((a, g) => a + (g[key] ?? 0), 0) / gs.length).toFixed(1)
+  const base = gs.reduce((a, g) => a + (g[key] ?? 0), 0) / gs.length
+  return (base * (per48.value ? 2 : 1)).toFixed(1)
 }
 function avgFgPct() {
   const gs = player.value?.games
@@ -266,7 +274,8 @@ function avgEfgPct() {
 function avgDreb() {
   const gs = player.value?.games
   if (!gs?.length) return '-'
-  return (gs.reduce((a, g) => a + ((g.reb ?? 0) - (g.oreb ?? 0)), 0) / gs.length).toFixed(1)
+  const base = gs.reduce((a, g) => a + ((g.reb ?? 0) - (g.oreb ?? 0)), 0) / gs.length
+  return (base * (per48.value ? 2 : 1)).toFixed(1)
 }
 
 function playerAdvStats() {
@@ -288,7 +297,7 @@ function playerAdvStats() {
     { abbr: '3P Rate', val: r3,               label: t('pa_3prate'), tip: t('pa_3prate_tip') },
     { abbr: 'Pts/FGA', val: pefa,             label: t('pa_ptsfga'), tip: t('pa_ptsfga_tip') },
     { abbr: 'OREB%',   val: orbp,             label: t('pa_orebp'),  tip: t('pa_orebp_tip') },
-    { abbr: 'Def',     val: def.toFixed(1),   label: t('pa_def'),    tip: t('pa_def_tip') },
+    { abbr: 'Def',     val: (def * (per48.value ? 2 : 1)).toFixed(1),   label: t('pa_def'),    tip: t('pa_def_tip') },
   ]
 }
 
