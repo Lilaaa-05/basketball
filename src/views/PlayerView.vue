@@ -23,6 +23,7 @@
           </div>
           <!-- right: jersey number panel -->
           <div class="ph-right">
+            <img v-if="player.avatar" :src="baseUrl + player.avatar" class="ph-avatar" :alt="player.name" />
             <div class="ph-jersey-num">{{ player.number }}</div>
             <div class="ph-num-display">{{ player.number }}</div>
           </div>
@@ -212,6 +213,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { t } from '../i18n.js'
 
+const baseUrl = import.meta.env.BASE_URL
 const route  = useRoute()
 const player = ref(null)
 const loading = ref(true)
