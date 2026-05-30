@@ -177,6 +177,19 @@ a { color: inherit; text-decoration: none; }
   text-shadow: 0 4px 24px rgba(0,0,0,.35);
 }
 /* position chip: top-right */
+.rc-avatar {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: cover;
+  object-position: top center;
+  z-index: 1;
+  pointer-events: none;
+}
+.rc-jersey--hidden { opacity: 0; }
 .rc-pos-chip {
   position: absolute;
   top: 14px;
@@ -331,6 +344,15 @@ a { color: inherit; text-decoration: none; }
 }
 .ph-tag.pos { color: var(--accent); border-color: rgba(29,66,138,.25); background: rgba(29,66,138,.06); }
 
+.ph-avatar {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  z-index: 2;
+}
 .ph-right {
   width: 180px;
   background: var(--accent);

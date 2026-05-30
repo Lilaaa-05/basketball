@@ -321,4 +321,25 @@
     "tags": [],
     "honors": []
   }
+  ,
+  {
+    "id": "chai",
+    "name": "chai",
+    "nickname": "C",
+    "number": 96,
+    "position": "",
+    "height": "",
+    "weight": "",
+    "joined": "",
+    "avatar": "pic/chai.jpeg",
+    "games": [],
+    "wingspan": "",
+    "standing_reach": "",
+    "school": "",
+    "contract": "",
+    "idol": "",
+    "mold": "",
+    "tags": ["篮板痴汉"],
+    "honors": []
+  }
 ]

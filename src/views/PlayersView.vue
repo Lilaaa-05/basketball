@@ -16,7 +16,8 @@
         <div class="rc-hero">
           <span class="rc-pos-chip">{{ p.position }}</span>
           <div class="rc-shadow-num">{{ p.number }}</div>
-          <div class="rc-jersey">{{ p.number }}</div>
+          <img v-if="p.avatar" :src="baseUrl + p.avatar" class="rc-avatar" :alt="p.name" />
+          <div class="rc-jersey" :class="{ 'rc-jersey--hidden': p.avatar }">{{ p.number }}</div>
         </div>
 
         <!-- body: name + profile + stats -->
@@ -62,6 +63,7 @@
 import { ref, onMounted } from 'vue'
 import { t } from '../i18n.js'
 
+const baseUrl = import.meta.env.BASE_URL
 const players = ref([])
 const loading = ref(true)
 
