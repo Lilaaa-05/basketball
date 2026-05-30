@@ -2,6 +2,58 @@
   <div class="page">
     <div class="section-header">{{ t('matches_title') }}</div>
 
+    <!-- latest match photo banner -->
+    <div class="mpb-carousel-wrap">
+      <div class="mpb-carousel" ref="carousel" @scroll.passive="onScroll">
+
+        <!-- slide 1 -->
+        <div class="mpb-slide">
+          <div class="mpb-photo-wrap">
+            <img :src="baseUrl + 'pic/match/game1.png'" class="mpb-photo-img" alt="Game 1" />
+            <!-- score overlay -->
+            <div class="mpb-score-overlay" v-if="matches[0]">
+              <div class="mpb-so-team">
+                <span class="mpb-so-name">{{ matches[0].team_a.name }}</span>
+                <span class="mpb-so-score" :class="{ winner: matches[0].team_a.score > matches[0].team_b.score }">{{ matches[0].team_a.score }}</span>
+              </div>
+              <span class="mpb-so-sep">—</span>
+              <div class="mpb-so-team mpb-so-team--b">
+                <span class="mpb-so-score" :class="{ winner: matches[0].team_b.score > matches[0].team_a.score }">{{ matches[0].team_b.score }}</span>
+                <span class="mpb-so-name">{{ matches[0].team_b.name }}</span>
+              </div>
+              <span class="mpb-so-final">FINAL</span>
+            </div>
+            <div class="mpb-photo-caption">
+              <span class="mpb-label">场边快照</span>
+              <div class="mpb-title">亚一卫打得爸爸叫爸爸</div>
+              <span class="mpb-sub">第1场 · 2026赛季</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- slide 2 -->
+        <div class="mpb-slide">
+          <div class="mpb-photo-wrap mpb-photo-wrap--news">
+            <div class="mpb-news-bg"></div>
+            <div class="mpb-news-icon">💰</div>
+            <div class="mpb-news-amount">200万</div>
+            <div class="mpb-photo-caption">
+              <span class="mpb-label mpb-label--gold">球队动态</span>
+              <div class="mpb-title mpb-title--gold">Shames：传爸爸年蔥2百万挖胖虎</div>
+              <span class="mpb-sub">内部消息 · 2026赛季</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- dot indicators -->
+      <div class="mpb-dots">
+        <span class="mpb-dot" :class="{ active: activeSlide === 0 }"></span>
+        <span class="mpb-dot" :class="{ active: activeSlide === 1 }"></span>
+      </div>
+    </div>
+
     <div v-if="loading" class="loading">{{ t('loading') }}</div>
     <div v-else-if="!matches.length" class="empty">{{ t('no_data') }}</div>
 
@@ -172,20 +224,49 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { t } from '../i18n.js'
 
+const baseUrl = import.meta.env.BASE_URL
 const matches = ref([])
 const players = ref([])
 const loading = ref(true)
 const expanded = ref(new Set())
+
+const carousel = ref(null)
+const activeSlide = ref(0)
+const SLIDE_COUNT = 2
+let autoTimer = null
+
+function onScroll() {
+  if (!carousel.value) return
+  const idx = Math.round(carousel.value.scrollLeft / carousel.value.offsetWidth)
+  activeSlide.value = idx
+}
+
+function goToSlide(idx) {
+  if (!carousel.value) return
+  carousel.value.scrollTo({ left: idx * carousel.value.offsetWidth, behavior: 'smooth' })
+}
+
+function startAuto() {
+  autoTimer = setInterval(() => {
+    const next = (activeSlide.value + 1) % SLIDE_COUNT
+    goToSlide(next)
+  }, 4000)
+}
 
 onMounted(async () => {
   const [mr, pr] = await Promise.all([fetch(import.meta.env.BASE_URL + 'data/matches.json'), fetch(import.meta.env.BASE_URL + 'data/players.json')])
   matches.value = await mr.json()
   players.value = await pr.json()
   loading.value = false
+  startAuto()
+})
+
+onUnmounted(() => {
+  clearInterval(autoTimer)
 })
 
 function toggle(id) {

@@ -118,7 +118,7 @@
     "height": "",
     "weight": "",
     "joined": "2026-01",
-    "avatar": "",
+    "avatar": "pic/G.jpeg",
     "games": [
       {
         "match_id": "g1",
@@ -171,7 +171,7 @@
     "height": "",
     "weight": "",
     "joined": "2026-01",
-    "avatar": "",
+    "avatar": "pic/ZUAN.jpeg",
     "games": [
       {
         "match_id": "g1",
@@ -340,6 +340,26 @@
     "idol": "",
     "mold": "",
     "tags": ["篮板痴汉"],
+    "honors": []
+  },
+  {
+    "id": "tmac",
+    "name": "T-MAC",
+    "nickname": "T",
+    "number": 0,
+    "position": "",
+    "height": "",
+    "weight": "",
+    "joined": "",
+    "avatar": "pic/T-MAC.jpeg",
+    "games": [],
+    "wingspan": "",
+    "standing_reach": "",
+    "school": "",
+    "contract": "",
+    "idol": "",
+    "mold": "",
+    "tags": [],
     "honors": []
   }
 ]
