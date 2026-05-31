@@ -52,6 +52,7 @@ const zh = {
   rc_pts: '得分', rc_reb: '篮板', rc_ast: '助攻',
   rc_rank: '排名',
   stat_appearances: '场出场', match_th_player: '球员', match_basic: '基本统计',
+  match_watch_video: '观看录像',
   loading: 'Loading...', no_data: '暂无比赛记录',
   no_players: '暂无球员数据', no_player: '球员不存在',
 }
@@ -105,6 +106,7 @@ const ja = {
   rc_pts: '得点', rc_reb: 'リバウンド', rc_ast: 'アシスト',
   rc_rank: '順位',
   stat_appearances: '試合出場', match_th_player: '選手', match_basic: '基本スタッツ',
+  match_watch_video: '録画中継',
   loading: '読み込み中...', no_data: '試合記録なし',
   no_players: '選手データなし', no_player: '選手が見つかりません',
 }
