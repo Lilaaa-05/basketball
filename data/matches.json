@@ -21,7 +21,8 @@
       "players": []
     },
     "result": "team_a",
-    "mvp": "harada"
+    "mvp": "harada",
+    "videoUrl": "https://youtu.be/3ETz4PEOglA"
   },
   {
     "id": "g2",
@@ -45,6 +46,7 @@
       "players": []
     },
     "result": "team_a",
-    "mvp": "g"
+    "mvp": "g",
+    "videoUrl": "https://youtu.be/0BEFokIuxR8"
   }
 ]
