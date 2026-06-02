@@ -5,8 +5,7 @@ import vue from '@vitejs/plugin-vue'
 // Change 'basketball' below to match your actual repository name.
 export default defineConfig({
   plugins: [vue()],
-  // For GitHub Pages user site (username.github.io) use '/'.
-  // If you're deploying to a project page (username.github.io/repo),
-  // set this to '/your-repo-name/'.
-  base: '/',
+  // For GitHub Pages project site, set base to your repository name.
+  // Change '/basketball/' if your repo name differs.
+  base: '/basketball/',
 })
