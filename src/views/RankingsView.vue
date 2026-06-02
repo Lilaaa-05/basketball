@@ -1,6 +1,9 @@
 <template>
   <div class="page">
-    <h1 class="section-header">{{ t('rnk_title') }}</h1>
+  
+    <h1 class="section-header">{{ t('rnk_title') }}      
+    <button class="rnk-pill rnk-p48" :class="{ active: per48 }" @click="per48 = !per48">{{ t('players_mode_per48') }}</button>
+    </h1>
 
     <!-- Group selector -->
     <div class="rnk-groups">
@@ -54,6 +57,7 @@ import { t, lang } from '../i18n.js'
 
 const loading = ref(true)
 const players = ref([])
+const per48 = ref(false)
 
 onMounted(async () => {
   const res = await fetch(import.meta.env.BASE_URL + 'data/players.json')
@@ -108,18 +112,19 @@ function computeStats(p) {
   const sum = k => g.reduce((s, x) => s + (x[k] || 0), 0)
   const fgm = sum('fgm'), fga = sum('fga')
   const fg3m = sum('fg3m'), fg3a = sum('fg3a')
+  const scale = per48.value ? 2 : 1
   return {
     id:       p.id,
     name:     p.name,
     number:   p.number,
     position: p.position,
     n,
-    ppg:    sum('pts') / n,
-    rpg:    sum('reb') / n,
-    apg:    sum('ast') / n,
-    spg:    sum('stl') / n,
-    bpg:    sum('blk') / n,
-    topg:   sum('tov') / n,
+    ppg:    (sum('pts') / n) * scale,
+    rpg:    (sum('reb') / n) * scale,
+    apg:    (sum('ast') / n) * scale,
+    spg:    (sum('stl') / n) * scale,
+    bpg:    (sum('blk') / n) * scale,
+    topg:   (sum('tov') / n) * scale,
     fgpct:  fga  > 0 ? fgm / fga  : 0,
     fg3pct: fg3a > 0 ? fg3m / fg3a : 0,
     efgpct: fga  > 0 ? (fgm + 0.5 * fg3m) / fga : 0,

@@ -9,38 +9,36 @@
         <!-- slide 1 -->
         <div class="mpb-slide">
           <div class="mpb-photo-wrap">
-            <img :src="baseUrl + 'pic/match/game1.png'" class="mpb-photo-img" alt="Game 1" />
+            <img :src="baseUrl + 'pic/match/game3.png'" class="mpb-photo-img" alt="Game 3" />
             <!-- score overlay -->
-            <div class="mpb-score-overlay" v-if="matches[0]">
+            <div class="mpb-score-overlay" v-if="recentMatches[0]">
               <div class="mpb-so-team">
-                <span class="mpb-so-name">{{ matches[0].team_a.name }}</span>
-                <span class="mpb-so-score" :class="{ winner: matches[0].team_a.score > matches[0].team_b.score }">{{ matches[0].team_a.score }}</span>
+                <span class="mpb-so-name">{{ teamName(recentMatches[0].team_a.name) }}</span>
+                <span class="mpb-so-score" :class="{ winner: recentMatches[0].team_a.score > recentMatches[0].team_b.score }">{{ recentMatches[0].team_a.score }}</span>
               </div>
               <span class="mpb-so-sep">—</span>
               <div class="mpb-so-team mpb-so-team--b">
-                <span class="mpb-so-score" :class="{ winner: matches[0].team_b.score > matches[0].team_a.score }">{{ matches[0].team_b.score }}</span>
-                <span class="mpb-so-name">{{ matches[0].team_b.name }}</span>
+                <span class="mpb-so-score" :class="{ winner: recentMatches[0].team_b.score > recentMatches[0].team_a.score }">{{ recentMatches[0].team_b.score }}</span>
+                <span class="mpb-so-name">{{ teamName(recentMatches[0].team_b.name) }}</span>
               </div>
               <span class="mpb-so-final">FINAL</span>
             </div>
             <div class="mpb-photo-caption">
-              <span class="mpb-label">场边快照</span>
-              <div class="mpb-title">亚一卫打得爸爸叫爸爸</div>
-              <span class="mpb-sub">第1场 · 2026赛季</span>
+              <span class="mpb-label">{{ t('latest_label') }}</span>
+              <div class="mpb-title">{{ t('latest_title') }}</div>
+              <span class="mpb-sub">{{ t('latest_sub') }}</span>
             </div>
           </div>
         </div>
 
-        <!-- slide 2 -->
+        <!-- slide 2: localized fan discussion -->
         <div class="mpb-slide">
           <div class="mpb-photo-wrap mpb-photo-wrap--news">
-            <div class="mpb-news-bg"></div>
-            <div class="mpb-news-icon">💰</div>
-            <div class="mpb-news-amount">200万</div>
+            <div class="mpb-news-emoji">🗣️</div>
             <div class="mpb-photo-caption">
-              <span class="mpb-label mpb-label--gold">球队动态</span>
-              <div class="mpb-title mpb-title--gold">Shames：传爸爸年蔥2百万挖胖虎</div>
-              <span class="mpb-sub">内部消息 · 2026赛季</span>
+              <span class="mpb-label mpb-label--gold">{{ t('news_label') }}</span>
+              <div class="mpb-title mpb-title--gold">{{ t('news_title') }}</div>
+              <span class="mpb-sub">{{ t('news_sub') }}</span>
             </div>
           </div>
         </div>
@@ -49,8 +47,7 @@
 
       <!-- dot indicators -->
       <div class="mpb-dots">
-        <span class="mpb-dot" :class="{ active: activeSlide === 0 }"></span>
-        <span class="mpb-dot" :class="{ active: activeSlide === 1 }"></span>
+        <span v-for="i in SLIDE_COUNT" :key="i" class="mpb-dot" :class="{ active: activeSlide === (i-1) }"></span>
       </div>
     </div>
 
@@ -58,7 +55,7 @@
     <div v-else-if="!matches.length" class="empty">{{ t('no_data') }}</div>
 
     <div v-else class="gc-wrap">
-      <div v-for="m in matches" :key="m.id" class="gc">
+      <div v-for="m in recentMatches" :key="m.id" class="gc">
 
         <!-- header strip -->
         <div class="gc-header">
@@ -76,13 +73,13 @@
             <div class="gc-score-area">
               <div class="gc-row" :class="{ winner: m.team_a.score > m.team_b.score }">
                 <div class="gc-dot black">黑</div>
-                <div class="gc-tname">{{ m.team_a.name }}</div>
+                <div class="gc-tname">{{ teamName(m.team_a.name) }}</div>
                 <div class="gc-tscore">{{ m.team_a.score }}</div>
                 <span class="gc-win-mark">▶</span>
               </div>
               <div class="gc-row" :class="{ winner: m.team_b.score > m.team_a.score }">
                 <div class="gc-dot white">白</div>
-                <div class="gc-tname">{{ m.team_b.name }}</div>
+                <div class="gc-tname">{{ teamName(m.team_b.name) }}</div>
                 <div class="gc-tscore">{{ m.team_b.score }}</div>
                 <span class="gc-win-mark">▶</span>
               </div>
@@ -153,7 +150,7 @@
             <!-- team basic stats -->
             <div class="gc-basic">
               <div class="gc-adv-header">
-                <span class="gc-adv-title">{{ t('match_basic') }} &middot; {{ m.team_a.name }}</span>
+                <span class="gc-adv-title">{{ t('match_basic') }} &middot; {{ teamName(m.team_a.name) }}</span>
               </div>
               <div class="gc-adv-row">
                 <div v-for="s in teamBasicStats(m)" :key="s.abbr" class="gc-adv-stat">
@@ -167,7 +164,7 @@
             <!-- advanced stats -->
             <div class="gc-adv">
               <div class="gc-adv-header">
-                <span class="gc-adv-title">{{ t('adv_section') }} &middot; {{ m.team_a.name }}</span>
+                <span class="gc-adv-title">{{ t('adv_section') }} &middot; {{ teamName(m.team_a.name) }}</span>
                 <a class="gc-adv-link" href="https://www.basketball-reference.com/about/glossary.html" target="_blank" rel="noopener noreferrer">{{ t('glossary_link') }} &nearr;</a>
               </div>
               <div class="gc-adv-row">
@@ -180,7 +177,7 @@
               <div class="gc-adv-note">★ {{ t('adv_note') }}</div>
             </div>
             <!-- team A -->
-            <div class="gc-box-team-label">{{ m.team_a.name }}</div>
+            <div class="gc-box-team-label">{{ teamName(m.team_a.name) }}</div>
             <table class="gc-box-table">
               <thead>
                 <tr>
@@ -211,7 +208,7 @@
               </tbody>
             </table>
             <!-- team B -->
-            <div class="gc-box-team-label" style="margin-top:4px">{{ m.team_b.name }}</div>
+            <div class="gc-box-team-label" style="margin-top:4px">{{ teamName(m.team_b.name) }}</div>
             <table class="gc-box-table">
               <thead>
                 <tr>
@@ -244,14 +241,206 @@
           </div>
         </Transition>
       </div>
+
+      <!-- old games collapsible -->
+      <div v-if="oldMatches.length" class="old-games-section">
+        <button class="old-games-toggle" @click="showOldGames = !showOldGames">
+          往期比赛 ({{ oldMatches.length }}场)
+          <span class="old-games-arrow">{{ showOldGames ? '▴' : '▾' }}</span>
+        </button>
+        <Transition name="slide">
+          <div v-if="showOldGames">
+            <div v-for="m in oldMatches" :key="m.id" class="gc">
+
+              <!-- header strip -->
+              <div class="gc-header">
+                <div>
+                  <span class="gc-round">{{ m.label }}</span>
+                  <span class="gc-date" style="margin-left:8px">{{ m.date }}</span>
+                </div>
+                <span class="gc-status final">FINAL</span>
+              </div>
+
+              <!-- main row: score (left) + leaders (right) -->
+              <div class="gc-main">
+                <!-- score -->
+                <div class="gc-score-panel">
+                  <div class="gc-score-area">
+                    <div class="gc-row" :class="{ winner: m.team_a.score > m.team_b.score }">
+                      <div class="gc-dot black">黑</div>
+                      <div class="gc-tname">{{ m.team_a.name }}</div>
+                      <div class="gc-tscore">{{ m.team_a.score }}</div>
+                      <span class="gc-win-mark">▶</span>
+                    </div>
+                    <div class="gc-row" :class="{ winner: m.team_b.score > m.team_a.score }">
+                      <div class="gc-dot white">白</div>
+                      <div class="gc-tname">{{ m.team_b.name }}</div>
+                      <div class="gc-tscore">{{ m.team_b.score }}</div>
+                      <span class="gc-win-mark">▶</span>
+                    </div>
+                  </div>
+                  <div class="gc-footer">
+                    <div class="gc-mvp" v-if="m.mvp">
+                      <span class="gc-mvp-star">★</span>
+                      <span>MVP</span>
+                      <span class="gc-mvp-name">{{ playerName(m.mvp) }}</span>
+                    </div>
+                    <div v-else></div>
+                    <div class="gc-footer-actions">
+                      <button
+                        v-if="hasVideo(m)"
+                        class="gc-expand-btn"
+                        :class="{ active: videoExpanded.has(m.id) }"
+                        @click="toggleVideo(m.id)"
+                      >
+                        {{ t('match_watch_video') }} <span class="gc-expand-arrow">▾</span>
+                      </button>
+                      <button
+                        class="gc-expand-btn"
+                        :class="{ active: expanded.has(m.id) }"
+                        @click="toggle(m.id)"
+                      >
+                        Box Score <span class="gc-expand-arrow">▾</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- leaders -->
+                <div class="gc-leaders">
+                  <div class="gc-leaders-title">Game Leaders</div>
+                  <div v-for="leader in topScorers(m)" :key="leader.pid" class="gc-leader">
+                    <span class="gc-leader-num">#{{ leader.num }}</span>
+                    <span class="gc-leader-name">
+                      <RouterLink :to="'/player/' + leader.pid">{{ leader.name }}</RouterLink>
+                    </span>
+                    <div class="gc-leader-stats">
+                      <div class="gc-stat"><span class="gc-stat-v">{{ leader.pts }}</span><span class="gc-stat-l">PTS</span></div>
+                      <div class="gc-stat"><span class="gc-stat-v">{{ leader.reb }}</span><span class="gc-stat-l">REB</span></div>
+                      <div class="gc-stat"><span class="gc-stat-v">{{ leader.ast }}</span><span class="gc-stat-l">AST</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- match video -->
+              <Transition name="slide">
+                <div v-if="videoExpanded.has(m.id) && hasVideo(m)" class="gc-video">
+                  <div class="gc-video-wrap">
+                    <iframe
+                      :src="'https://www.youtube.com/embed/' + youtubeId(m.videoUrl)"
+                      :title="m.label + ' video'"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen
+                      referrerpolicy="strict-origin-when-cross-origin"
+                    />
+                  </div>
+                </div>
+              </Transition>
+
+              <!-- box score -->
+              <Transition name="slide">
+                <div v-if="expanded.has(m.id)" class="gc-box">
+                  <div class="gc-basic">
+                    <div class="gc-adv-header">
+                      <span class="gc-adv-title">{{ t('match_basic') }} &middot; {{ m.team_a.name }}</span>
+                    </div>
+                    <div class="gc-adv-row">
+                      <div v-for="s in teamBasicStats(m)" :key="s.abbr" class="gc-adv-stat">
+                        <div class="gc-adv-abbr">{{ s.abbr }}</div>
+                        <div class="gc-adv-val">{{ s.val }}</div>
+                        <div class="gc-adv-desc">{{ s.label }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="gc-adv">
+                    <div class="gc-adv-header">
+                      <span class="gc-adv-title">{{ t('adv_section') }} &middot; {{ m.team_a.name }}</span>
+                      <a class="gc-adv-link" href="https://www.basketball-reference.com/about/glossary.html" target="_blank" rel="noopener noreferrer">{{ t('glossary_link') }} &nearr;</a>
+                    </div>
+                    <div class="gc-adv-row">
+                      <div v-for="s in advStats(m)" :key="s.abbr" class="gc-adv-stat">
+                        <div class="gc-adv-abbr" :title="s.tip">{{ s.abbr }} <span class="gc-adv-q">ⓘ</span></div>
+                        <div class="gc-adv-val" :class="s.cls">{{ s.val }}</div>
+                        <div class="gc-adv-desc">{{ s.label }}</div>
+                      </div>
+                    </div>
+                    <div class="gc-adv-note">★ {{ t('adv_note') }}</div>
+                  </div>
+                  <div class="gc-box-team-label">{{ teamName(m.team_a.name) }}</div>
+                  <table class="gc-box-table">
+                    <thead>
+                      <tr>
+                        <th>{{ t('match_th_player') }}</th>
+                        <th>MIN</th><th>PTS</th><th>REB</th><th>AST</th>
+                        <th>BLK</th><th>STL</th><th>TOV</th>
+                        <th>FGM</th><th>FGA</th><th>FG%</th>
+                        <th>3PM</th><th>3PA</th><th>3P%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="pid in m.team_a.players" :key="pid">
+                        <td><div class="gc-box-player"><span class="gc-box-num">#{{ playerNum(pid) }}</span><RouterLink :to="'/player/' + pid">{{ playerName(pid) }}</RouterLink></div></td>
+                        <td>{{ gs(pid, m.id, 'min') }}</td>
+                        <td class="gc-box-pts">{{ gs(pid, m.id, 'pts') }}</td>
+                        <td>{{ gs(pid, m.id, 'reb') }}</td>
+                        <td>{{ gs(pid, m.id, 'ast') }}</td>
+                        <td>{{ gs(pid, m.id, 'blk') }}</td>
+                        <td>{{ gs(pid, m.id, 'stl') }}</td>
+                        <td>{{ gs(pid, m.id, 'tov') }}</td>
+                        <td>{{ gs(pid, m.id, 'fgm') }}</td>
+                        <td>{{ gs(pid, m.id, 'fga') }}</td>
+                        <td>{{ fgp(pid, m.id) }}</td>
+                        <td>{{ gs(pid, m.id, 'fg3m') }}</td>
+                        <td>{{ gs(pid, m.id, 'fg3a') }}</td>
+                        <td>{{ fg3(pid, m.id) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="gc-box-team-label" style="margin-top:4px">{{ teamName(m.team_b.name) }}</div>
+                  <table class="gc-box-table">
+                    <thead>
+                      <tr>
+                        <th>{{ t('match_th_player') }}</th>
+                        <th>MIN</th><th>PTS</th><th>REB</th><th>AST</th>
+                        <th>BLK</th><th>STL</th><th>TOV</th>
+                        <th>FGM</th><th>FGA</th><th>FG%</th>
+                        <th>3PM</th><th>3PA</th><th>3P%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="pid in m.team_b.players" :key="pid">
+                        <td><div class="gc-box-player"><span class="gc-box-num">#{{ playerNum(pid) }}</span><RouterLink :to="'/player/' + pid">{{ playerName(pid) }}</RouterLink></div></td>
+                        <td>{{ gs(pid, m.id, 'min') }}</td>
+                        <td class="gc-box-pts">{{ gs(pid, m.id, 'pts') }}</td>
+                        <td>{{ gs(pid, m.id, 'reb') }}</td>
+                        <td>{{ gs(pid, m.id, 'ast') }}</td>
+                        <td>{{ gs(pid, m.id, 'blk') }}</td>
+                        <td>{{ gs(pid, m.id, 'stl') }}</td>
+                        <td>{{ gs(pid, m.id, 'tov') }}</td>
+                        <td>{{ gs(pid, m.id, 'fgm') }}</td>
+                        <td>{{ gs(pid, m.id, 'fga') }}</td>
+                        <td>{{ fgp(pid, m.id) }}</td>
+                        <td>{{ gs(pid, m.id, 'fg3m') }}</td>
+                        <td>{{ gs(pid, m.id, 'fg3a') }}</td>
+                        <td>{{ fg3(pid, m.id) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </Transition>
+            </div>
+          </div>
+        </Transition>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
-import { t } from '../i18n.js'
+import { t, lang } from '../i18n.js'
 
 const baseUrl = import.meta.env.BASE_URL
 const matches = ref([])
@@ -259,6 +448,11 @@ const players = ref([])
 const loading = ref(true)
 const expanded = ref(new Set())
 const videoExpanded = ref(new Set())
+
+const showOldGames = ref(false)
+
+const recentMatches = computed(() => matches.value.filter(m => m.date >= '2026-05-31'))
+const oldMatches = computed(() => matches.value.filter(m => m.date < '2026-05-31'))
 
 const carousel = ref(null)
 const activeSlide = ref(0)
@@ -280,7 +474,7 @@ function startAuto() {
   autoTimer = setInterval(() => {
     const next = (activeSlide.value + 1) % SLIDE_COUNT
     goToSlide(next)
-  }, 4000)
+  }, 10000)
 }
 
 onMounted(async () => {
@@ -338,6 +532,17 @@ function hasVideo(m) {
 const fp = id => players.value.find(p => p.id === id)
 const playerName = id => fp(id)?.name ?? id
 const playerNum  = id => fp(id)?.number ?? '?'
+
+function teamName(name) {
+  if (lang.value === 'ja') {
+    const map = {
+      '雪谷火箭': '雪谷ロケット',
+      '爸爸': 'パパチーム'
+    }
+    return map[name] ?? name
+  }
+  return name
+}
 
 function gs(pid, mid, key) {
   const g = fp(pid)?.games?.find(g => g.match_id === mid)
