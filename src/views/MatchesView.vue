@@ -451,8 +451,8 @@ const videoExpanded = ref(new Set())
 
 const showOldGames = ref(false)
 
-const recentMatches = computed(() => matches.value.filter(m => m.date >= '2026-05-31'))
-const oldMatches = computed(() => matches.value.filter(m => m.date < '2026-05-31'))
+const recentMatches = computed(() => matches.value.filter(m => m.date >= '2026-06-14'))
+const oldMatches = computed(() => matches.value.filter(m => m.date < '2026-06-14'))
 
 const carousel = ref(null)
 const activeSlide = ref(0)
