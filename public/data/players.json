@@ -1,6 +1,7 @@
 [
   {
     "id": "feng",
+    "isRosterMember": true,
     "name": "Feng",
     "nickname": "F",
     "number": 5,
@@ -86,6 +87,7 @@
   },
   {
     "id": "liao",
+    "isRosterMember": true,
     "name": "胖虎",
     "nickname": "L",
     "number": 10,
@@ -175,6 +177,7 @@
   },
   {
     "id": "g",
+    "isRosterMember": true,
     "name": "G",
     "nickname": "G",
     "number": 3,
@@ -260,6 +263,7 @@
   },
   {
     "id": "zuan",
+    "isRosterMember": true,
     "name": "Zuan",
     "nickname": "Z",
     "number": 11,
@@ -345,6 +349,7 @@
   },
   {
     "id": "harada",
+    "isRosterMember": true,
     "name": "Harada",
     "nickname": "H",
     "number": 7,
@@ -430,6 +435,7 @@
   },
   {
     "id": "hashimoto",
+    "isRosterMember": true,
     "name": "Hashimoto",
     "nickname": "HM",
     "number": 33,
@@ -516,6 +522,7 @@
   ,
   {
     "id": "chai",
+    "isRosterMember": true,
     "name": "chai",
     "nickname": "C",
     "number": 96,
@@ -569,6 +576,7 @@
   },
   {
     "id": "tmac",
+    "isRosterMember": true,
     "name": "T-MAC",
     "nickname": "T",
     "number": 0,

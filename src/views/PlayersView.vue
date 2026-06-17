@@ -87,7 +87,9 @@ const loading = ref(true)
 const statMode = ref('avg')
 
 const displayPlayers = computed(() => {
-  return [...players.value].sort((a, b) => numStat(b, 'pts') - numStat(a, 'pts'))
+  return players.value
+    .filter(isRosterMember)
+    .sort((a, b) => numStat(b, 'pts') - numStat(a, 'pts'))
 })
 
 onMounted(async () => {
@@ -112,6 +114,10 @@ function per48(player, key) {
 function statValue(player, key) {
   if (statMode.value === 'per48') return per48(player, key)
   return avg(player, key)
+}
+
+function isRosterMember(player) {
+  return player.isRosterMember !== false
 }
 
 function numStat(player, key) {

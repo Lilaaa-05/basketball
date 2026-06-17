@@ -134,7 +134,11 @@ function computeStats(p) {
   }
 }
 
-const allStats = computed(() => players.value.map(computeStats).filter(Boolean))
+function isRosterMember(player) {
+  return player.isRosterMember !== false
+}
+
+const allStats = computed(() => players.value.filter(isRosterMember).map(computeStats).filter(Boolean))
 
 const ranked = computed(() => {
   const def = currentStatDef.value
