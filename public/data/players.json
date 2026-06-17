@@ -2,6 +2,7 @@
   {
     "id": "feng",
     "isRosterMember": true,
+    "playerType": "keepb",
     "name": "Feng",
     "nickname": "F",
     "number": 5,
@@ -88,6 +89,7 @@
   {
     "id": "liao",
     "isRosterMember": true,
+    "playerType": "keepb",
     "name": "胖虎",
     "nickname": "L",
     "number": 10,
@@ -178,6 +180,7 @@
   {
     "id": "g",
     "isRosterMember": true,
+    "playerType": "keepb",
     "name": "G",
     "nickname": "G",
     "number": 3,
@@ -264,6 +267,7 @@
   {
     "id": "zuan",
     "isRosterMember": true,
+    "playerType": "keepb",
     "name": "Zuan",
     "nickname": "Z",
     "number": 11,
@@ -350,6 +354,7 @@
   {
     "id": "harada",
     "isRosterMember": true,
+    "playerType": "keepb",
     "name": "Harada",
     "nickname": "H",
     "number": 7,
@@ -436,6 +441,7 @@
   {
     "id": "hashimoto",
     "isRosterMember": true,
+    "playerType": "keepb",
     "name": "Hashimoto",
     "nickname": "HM",
     "number": 33,
@@ -523,6 +529,7 @@
   {
     "id": "chai",
     "isRosterMember": true,
+    "playerType": "keepb",
     "name": "chai",
     "nickname": "C",
     "number": 96,
@@ -577,6 +584,7 @@
   {
     "id": "tmac",
     "isRosterMember": true,
+    "playerType": "keepb",
     "name": "T-MAC",
     "nickname": "T",
     "number": 0,

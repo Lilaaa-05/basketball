@@ -135,6 +135,7 @@ function computeStats(p) {
 }
 
 function isRosterMember(player) {
+  if (player.playerType) return player.playerType === 'keepb'
   return player.isRosterMember !== false
 }
 
