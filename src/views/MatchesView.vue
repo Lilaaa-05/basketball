@@ -11,15 +11,15 @@
           <div class="mpb-photo-wrap">
             <img :src="baseUrl + 'pic/match/game3.png'" class="mpb-photo-img" alt="Game 3" />
             <!-- score overlay -->
-            <div class="mpb-score-overlay" v-if="recentMatches[0]">
+            <div class="mpb-score-overlay" v-if="bannerMatch">
               <div class="mpb-so-team">
-                <span class="mpb-so-name">{{ teamName(recentMatches[0].team_a.name) }}</span>
-                <span class="mpb-so-score" :class="{ winner: recentMatches[0].team_a.score > recentMatches[0].team_b.score }">{{ recentMatches[0].team_a.score }}</span>
+                <span class="mpb-so-name">{{ teamName(bannerMatch.team_a.name) }}</span>
+                <span class="mpb-so-score" :class="{ winner: bannerMatch.team_a.score > bannerMatch.team_b.score }">{{ bannerMatch.team_a.score }}</span>
               </div>
               <span class="mpb-so-sep">—</span>
               <div class="mpb-so-team mpb-so-team--b">
-                <span class="mpb-so-score" :class="{ winner: recentMatches[0].team_b.score > recentMatches[0].team_a.score }">{{ recentMatches[0].team_b.score }}</span>
-                <span class="mpb-so-name">{{ teamName(recentMatches[0].team_b.name) }}</span>
+                <span class="mpb-so-score" :class="{ winner: bannerMatch.team_b.score > bannerMatch.team_a.score }">{{ bannerMatch.team_b.score }}</span>
+                <span class="mpb-so-name">{{ teamName(bannerMatch.team_b.name) }}</span>
               </div>
               <span class="mpb-so-final">FINAL</span>
             </div>
@@ -453,6 +453,12 @@ const showOldGames = ref(false)
 
 const recentMatches = computed(() => matches.value.filter(m => m.date >= '2026-06-14'))
 const oldMatches = computed(() => matches.value.filter(m => m.date < '2026-06-14'))
+
+// Choose a match to show in the banner: prefer Game 6 if present, otherwise the most recent
+const bannerMatch = computed(() => {
+  const g6 = matches.value.find(m => (m.label || '').toString().toLowerCase().includes('game 6') || m.id === 'game6')
+  return g6 || recentMatches.value[0] || null
+})
 
 const carousel = ref(null)
 const activeSlide = ref(0)

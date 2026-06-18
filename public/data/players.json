@@ -10,7 +10,7 @@
     "height": "",
     "weight": "",
     "joined": "2026-01",
-    "avatar": "",
+    "avatar": "pic/Feng.jpeg",
     "games": [
       {"match_id": "g1", "pts": 2, "reb": 13, "ast": 6, "stl": 1, "blk": 1, "tov": 5, "fgm": 1, "fga": 7, "fg2m": 1, "fg2a": 3, "fg3m": 0, "fg3a": 4, "oreb": 4},
       {"match_id": "g2", "pts": 7, "reb": 9, "ast": 4, "stl": 1, "blk": 0, "tov": 1, "fgm": 3, "fga": 9, "fg2m": 2, "fg2a": 5, "fg3m": 1, "fg3a": 4, "oreb": 2},
