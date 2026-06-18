@@ -63,6 +63,30 @@
       </div>
 
       <!-- 总体平均 -->
+      <!-- 六边形雷达图：仅在总体平均时显示 -->
+      <div v-if="tab === 'avg'" class="hex-chart-wrap" style="margin-top:16px">
+        <svg v-if="hexReady" :width="hexSize" :height="hexSize" viewBox="0 0 240 240" role="img" aria-label="六项基础数据对比雷达图">
+          <g transform="translate(120,120)">
+            <!-- grid polygons -->
+            <template v-for="level in [0.25,0.5,0.75,1]" :key="level">
+              <polygon :points="polygonPoints(level)" fill="none" stroke="#c0c8d8" stroke-width="1" />
+            </template>
+            <!-- overall avg (blue) -->
+            <polygon :points="polygonPointsForValues(overallNorm)" fill="none" stroke="#2b7be4" stroke-width="2" />
+            <!-- player (red) -->
+            <polygon :points="polygonPointsForValues(playerNorm)" fill="none" stroke="#e43b3b" stroke-width="2" />
+            <!-- axes and labels -->
+            <g v-for="(lab, i) in hexLabels" :key="lab">
+              <line :x1="0" :y1="0" :x2="axisPos(i).x" :y2="axisPos(i).y" stroke="#c8d0dc" />
+              <text :x="labelPos(i).x" :y="labelPos(i).y" font-size="10" text-anchor="middle" fill="#333">{{ lab }}</text>
+            </g>
+          </g>
+        </svg>
+        <div style="margin-top:8px; font-size:13px;">
+          <span style="display:inline-block;width:12px;height:8px;background:#2b7be4;margin-right:6px"></span> 总体平均
+          <span style="display:inline-block;width:12px;height:8px;background:#e43b3b;margin:0 6px 0 12px"></span> 个人
+        </div>
+      </div>
       <div v-if="tab === 'avg'">
         <div class="stats-section-label">{{ t('basic_data') }}</div>
         <div class="avg-grid">
@@ -98,6 +122,7 @@
               <div class="gc-adv-abbr" :title="s.tip">{{ s.abbr }} <span class="gc-adv-q">ⓘ</span></div>
               <div class="gc-adv-val">{{ s.val }}</div>
               <div class="gc-adv-desc">{{ s.label }}</div>
+              <div class="ag-rank">{{ statRank(s.metricKey) }}</div>
             </div>
           </div>
         </div>
@@ -213,9 +238,99 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { t } from '../i18n.js'
+import { isAllowed } from '../allowedPlayers.js'
 
 const baseUrl = import.meta.env.BASE_URL
 const route  = useRoute()
+
+// 雷达图相关（改为五边形，去掉失误）
+const hexMetrics = ['pts', 'reb', 'ast', 'stl', 'blk']
+const hexLabels = ['PTS','REB','AST','STL','BLK']
+const hexSize = 240
+
+function numAvgForPlayer(p, key) {
+  const gs = p?.games
+  if (!gs?.length) return 0
+  const base = gs.reduce((a, g) => a + (g[key] ?? 0), 0) / gs.length
+  return base * (per48.value ? 2 : 1)
+}
+
+const hexReady = ref(false)
+const overallNorm = ref([])
+const playerNorm = ref([])
+
+function computeHex() {
+  const playersList = allPlayers.value.filter(isAllowed)
+  if (!playersList.length) {
+    overallNorm.value = hexMetrics.map(() => 0)
+    playerNorm.value = hexMetrics.map(() => 0)
+    hexReady.value = true
+    return
+  }
+
+  // per-metric max for normalization
+  const maxes = hexMetrics.map(k => {
+    const vals = playersList.map(p => numAvgForPlayer(p, k))
+    return Math.max(...vals, 1)
+  })
+
+  const overall = hexMetrics.map((k, i) => {
+    const vals = playersList.map(p => numAvgForPlayer(p, k))
+    const valid = vals.filter(v => v != null)
+    const avg = valid.length ? valid.reduce((a,b)=>a+b,0)/valid.length : 0
+    return avg
+  })
+
+  const pvals = hexMetrics.map(k => numAvgForPlayer(player.value, k))
+
+  // normalize (0..1)
+  overallNorm.value = overall.map((v, i) => {
+    const m = maxes[i] || 1
+    return (v / m)
+  })
+  playerNorm.value = pvals.map((v, i) => {
+    const m = maxes[i] || 1
+    return (v / m)
+  })
+  hexReady.value = true
+}
+
+function polygonPointsForValues(vals) {
+  const r = 90
+  const pts = vals.map((v, i) => {
+    const angle = -Math.PI / 2 + (i * 2 * Math.PI) / vals.length
+    const x = Math.cos(angle) * v * r
+    const y = Math.sin(angle) * v * r
+    return `${x},${y}`
+  })
+  return pts.join(' ')
+}
+
+function polygonPoints(level) {
+  const r = 90 * level
+  const pts = hexMetrics.map((_, i) => {
+    const angle = -Math.PI / 2 + (i * 2 * Math.PI) / hexMetrics.length
+    const x = Math.cos(angle) * r
+    const y = Math.sin(angle) * r
+    return `${x},${y}`
+  })
+  return pts.join(' ')
+}
+
+function axisPos(i) {
+  const r = 100
+  const angle = -Math.PI / 2 + (i * 2 * Math.PI) / hexMetrics.length
+  return { x: Math.cos(angle) * r, y: Math.sin(angle) * r }
+}
+
+function labelPos(i) {
+  const r = 115
+  const angle = -Math.PI / 2 + (i * 2 * Math.PI) / hexMetrics.length
+  return { x: Math.cos(angle) * r, y: Math.sin(angle) * r + 4 }
+}
+
+// recompute when player or allPlayers load / per48 changes
+// (watch is attached after player/allPlayers are defined)
 const player = ref(null)
 const allPlayers = ref([])
 const loading = ref(true)
@@ -237,6 +352,11 @@ async function load() {
 }
 onMounted(load)
 watch(() => route.params.id, load)
+
+// recompute hex when player or allPlayers load / per48 changes
+watch([player, allPlayers, per48], () => {
+  if (player.value && allPlayers.value.length) computeHex()
+})
 
 function avg(key) {
   const gs = player.value?.games
@@ -311,6 +431,57 @@ function statValueForPlayer(p, metric) {
     return fga ? ((sum('fgm') + 0.5 * sum('fg3m')) / fga * 100) : null
   }
 
+  if (metric === 'asttov') {
+    const a = sum('ast')
+    const t = sum('tov')
+    if (t > 0) return a / t
+    if (a > 0) return Number.POSITIVE_INFINITY
+    return null
+  }
+  if (metric === 'p3rate') {
+    const fga = sum('fga')
+    return fga > 0 ? (sum('fg3a') / fga * 100) : null
+  }
+  if (metric === 'ptsfga') {
+    const fga = sum('fga')
+    return fga > 0 ? (sum('pts') / fga) : null
+  }
+  if (metric === 'orebp') {
+    const miss = sum('fga') - sum('fgm')
+    return miss > 0 ? (sum('oreb') / miss * 100) : null
+  }
+  if (metric === 'def') {
+    return ((sum('stl') + sum('blk')) / gs.length) * (per48.value ? 2 : 1)
+  }
+
+  // 使用率（USG%）和 PIE 的估算：聚合同场比赛的所有球员数据来近似球队总量
+  if (metric === 'usg' || metric === 'pie') {
+    const matchIds = Array.from(new Set(gs.map(g => g.match_id)))
+    let teamOffEvents = 0
+    let teamImpact = 0
+    for (const mid of matchIds) {
+      for (const p of allPlayers.value || []) {
+        const pg = (p.games || []).find(x => x.match_id === mid)
+        if (!pg) continue
+        const pFga = pg.fga ?? 0, pFta = pg.fta ?? 0, pTov = pg.tov ?? 0
+        const pPts = pg.pts ?? 0
+        teamOffEvents += (pFga + 0.44 * pFta + pTov)
+        const pImpact = pPts + (pg.fgm ?? 0) + (pg.fg3m ?? 0) + (pg.ftm ?? 0) + (pg.oreb ?? 0) + (pg.stl ?? 0) + (pg.blk ?? 0) + (pg.ast ?? 0) - ((pg.fga ?? 0) - (pg.fgm ?? 0)) - pTov
+        teamImpact += Math.max(0, pImpact)
+      }
+    }
+
+    const playerOffEvents = gs.reduce((a, g) => a + ((g.fga ?? 0) + 0.44 * (g.fta ?? 0) + (g.tov ?? 0)), 0)
+    const playerImpact = gs.reduce((a, g) => a + ((g.pts ?? 0) + (g.fgm ?? 0) + (g.fg3m ?? 0) + (g.ftm ?? 0) + (g.oreb ?? 0) + (g.stl ?? 0) + (g.blk ?? 0) + (g.ast ?? 0) - ((g.fga ?? 0) - (g.fgm ?? 0)) - (g.tov ?? 0)), 0)
+
+    if (metric === 'usg') {
+      return teamOffEvents ? (playerOffEvents / teamOffEvents * 100) : null
+    }
+    if (metric === 'pie') {
+      return teamImpact ? (playerImpact / teamImpact * 100) : null
+    }
+  }
+
   return avgCount(metric)
 }
 
@@ -320,6 +491,7 @@ function statRank(metric) {
   if (targetVal == null) return '-'
 
   const entries = allPlayers.value
+    .filter(isAllowed)
     .map(p => ({ id: p.id, val: statValueForPlayer(p, metric) }))
     .filter(x => x.val != null)
     .sort((a, b) => b.val - a.val)
@@ -341,19 +513,56 @@ function playerAdvStats() {
   const fgm = sum('fgm'), fga = sum('fga'), fg3m = sum('fg3m')
   const ast  = sum('ast'), tov = sum('tov'), oreb = sum('oreb')
   const miss = fga - fgm
-  const efg  = fga  ? ((fgm + 0.5 * fg3m) / fga * 100).toFixed(1) + '%' : '-'
-  const atr  = tov  ? (ast / tov).toFixed(2) : ast > 0 ? '∞' : '-'
-  const r3   = fga  ? (sum('fg3a') / fga * 100).toFixed(1) + '%' : '-'
-  const pefa = fga  ? (sum('pts')  / fga).toFixed(2) : '-'
-  const orbp = miss ? (oreb / miss * 100).toFixed(1) + '%' : '-'
-  const def  = (sum('stl') + sum('blk')) / gs.length
+  const efgNum = fga  ? ((fgm + 0.5 * fg3m) / fga * 100) : null
+  const asttovNum = tov ? (ast / tov) : (ast > 0 ? Number.POSITIVE_INFINITY : null)
+  const p3rateNum = fga ? (sum('fg3a') / fga * 100) : null
+  const ptsfgaNum = fga ? (sum('pts') / fga) : null
+  const orbpNum = miss ? (oreb / miss * 100) : null
+  const defNum = ((sum('stl') + sum('blk')) / gs.length) * (per48.value ? 2 : 1)
+  const fmtPct = v => v == null ? '-' : v.toFixed(1) + '%'
+  const fmtDec = v => v == null ? '-' : (v === Number.POSITIVE_INFINITY ? '∞' : v.toFixed(2))
+  const fmtOne = v => v == null ? '-' : v.toFixed(1)
+  // TS% (真实命中率)
+  const fta = sum('fta')
+  const tsNum = (fga + 0.44 * fta) ? (sum('pts') / (2 * (fga + 0.44 * fta)) * 100) : null
+
+  // Helper: for USG% and PIE we estimate team totals by summing allPlayers' contributions for the same match ids
+  const matchIds = Array.from(new Set(gs.map(g => g.match_id)))
+  const teamTotals = { offEvents: 0, impact: 0 }
+  for (const mid of matchIds) {
+    for (const p of allPlayers.value || []) {
+      const pg = (p.games || []).find(x => x.match_id === mid)
+      if (!pg) continue
+      const pFga = pg.fga ?? 0, pFta = pg.fta ?? 0, pTov = pg.tov ?? 0
+      const pPts = pg.pts ?? 0
+      teamTotals.offEvents += (pFga + 0.44 * pFta + pTov)
+      const pImpact = pPts + (pg.fgm ?? 0) + (pg.fg3m ?? 0) + (pg.ftm ?? 0) + (pg.oreb ?? 0) + (pg.stl ?? 0) + (pg.blk ?? 0) + (pg.ast ?? 0) - ((pFga - (pg.fgm ?? 0)) || 0) - pTov
+      teamTotals.impact += Math.max(0, pImpact)
+    }
+  }
+
+  // Player totals for those matches
+  const playerOffEvents = gs.reduce((a, g) => a + ((g.fga ?? 0) + 0.44 * (g.fta ?? 0) + (g.tov ?? 0)), 0)
+  const playerImpact = gs.reduce((a, g) => a + ((g.pts ?? 0) + (g.fgm ?? 0) + (g.fg3m ?? 0) + (g.ftm ?? 0) + (g.oreb ?? 0) + (g.stl ?? 0) + (g.blk ?? 0) + (g.ast ?? 0) - ((g.fga ?? 0) - (g.fgm ?? 0)) - (g.tov ?? 0)), 0)
+
+  const usgNum = teamTotals.offEvents ? (playerOffEvents / teamTotals.offEvents * 100) : null
+  const pieNum = teamTotals.impact ? (playerImpact / teamTotals.impact * 100) : null
+
+  // Use precomputed values if present on player object
+  const perNum = player.value?.per ?? null
+  const wsNum = player.value?.ws ?? null
+  const bpmNum = player.value?.bpm ?? null
+  const vorpNum = player.value?.vorp ?? null
+
   return [
-    { abbr: 'eFG%',    val: efg,              label: t('pa_efg'),    tip: t('pa_efg_tip') },
-    { abbr: 'AST/TOV', val: atr,              label: t('pa_asttov'), tip: t('pa_asttov_tip') },
-    { abbr: '3P Rate', val: r3,               label: t('pa_3prate'), tip: t('pa_3prate_tip') },
-    { abbr: 'Pts/FGA', val: pefa,             label: t('pa_ptsfga'), tip: t('pa_ptsfga_tip') },
-    { abbr: 'OREB%',   val: orbp,             label: t('pa_orebp'),  tip: t('pa_orebp_tip') },
-    { abbr: 'Def',     val: (def * (per48.value ? 2 : 1)).toFixed(1),   label: t('pa_def'),    tip: t('pa_def_tip') },
+    { abbr: 'eFG%',    val: efgNum == null ? '-' : fmtPct(efgNum),    label: t('pa_efg'),    tip: t('pa_efg_tip'),    metricKey: 'efgpct' },
+    { abbr: 'AST/TOV', val: fmtDec(asttovNum),                       label: t('pa_asttov'), tip: t('pa_asttov_tip'), metricKey: 'asttov' },
+    { abbr: '3P Rate', val: p3rateNum == null ? '-' : fmtPct(p3rateNum), label: t('pa_3prate'), tip: t('pa_3prate_tip'), metricKey: 'p3rate' },
+    { abbr: 'Pts/FGA', val: ptsfgaNum == null ? '-' : ptsfgaNum.toFixed(2), label: t('pa_ptsfga'), tip: t('pa_ptsfga_tip'), metricKey: 'ptsfga' },
+    { abbr: 'OREB%',   val: orbpNum == null ? '-' : fmtPct(orbpNum),   label: t('pa_orebp'),  tip: t('pa_orebp_tip'),  metricKey: 'orebp' },
+    { abbr: 'Def',     val: fmtOne(defNum),                          label: t('pa_def'),    tip: t('pa_def_tip'),    metricKey: 'def' },
+    { abbr: 'USG%',    val: usgNum == null ? '-' : fmtPct(usgNum),    label: t('adv_usg'),   tip: t('adv_usg_tip'),   metricKey: 'usg' },
+    { abbr: 'PIE',     val: pieNum == null ? '-' : fmtPct(pieNum),    label: t('adv_pie'),   tip: t('adv_pie_tip'),   metricKey: 'pie' },
   ]
 }
 

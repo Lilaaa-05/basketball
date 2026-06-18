@@ -398,6 +398,17 @@ a { color: inherit; text-decoration: none; }
   flex-direction: column;
   align-items: center;
   gap: 0;
+
+/* player view: center hex/radar chart */
+.hex-chart-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+}
+.hex-chart-wrap svg { display: block; }
+.hex-chart-wrap > div { text-align: center; }
   margin-top: 24px;
 }
 .mpb-body {

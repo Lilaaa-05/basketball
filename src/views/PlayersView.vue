@@ -80,6 +80,7 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import { t } from '../i18n.js'
+import { isAllowed } from '../allowedPlayers.js'
 
 const baseUrl = import.meta.env.BASE_URL
 const players = ref([])
@@ -89,6 +90,7 @@ const statMode = ref('avg')
 const displayPlayers = computed(() => {
   return players.value
     .filter(isRosterMember)
+    .filter(isAllowed)
     .sort((a, b) => numStat(b, 'pts') - numStat(a, 'pts'))
 })
 

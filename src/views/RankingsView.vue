@@ -54,6 +54,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { t, lang } from '../i18n.js'
+import { isAllowed } from '../allowedPlayers.js'
 
 const loading = ref(true)
 const players = ref([])
@@ -69,6 +70,7 @@ onMounted(async () => {
 const groups = [
   { key: 'avg',   labelKey: 'rnk_grp_avg' },
   { key: 'pct',   labelKey: 'rnk_grp_pct' },
+  { key: 'adv',   labelKey: 'adv_section' },
   { key: 'total', labelKey: 'rnk_grp_total' },
 ]
 
@@ -90,6 +92,16 @@ const statsByGroup = {
     { key: 'pts', labelKey: 'rnk_pts', fmt: 'int', asc: false },
     { key: 'reb', labelKey: 'rnk_reb', fmt: 'int', asc: false },
     { key: 'ast', labelKey: 'rnk_ast', fmt: 'int', asc: false },
+  ],
+  adv: [
+    { key: 'efgpct', labelKey: 'pa_efg',    fmt: 'pct', asc: false },
+    { key: 'asttov',  labelKey: 'pa_asttov', fmt: 'dec', asc: false },
+    { key: 'p3rate',  labelKey: 'pa_3prate', fmt: 'pct', asc: false },
+    { key: 'ptsfga',  labelKey: 'pa_ptsfga', fmt: 'dec', asc: false },
+    { key: 'orebp',   labelKey: 'pa_orebp',  fmt: 'pct', asc: false },
+    { key: 'def',     labelKey: 'pa_def',    fmt: 'dec', asc: false },
+    { key: 'usg',     labelKey: 'adv_usg',   fmt: 'pct', asc: false },
+    { key: 'pie',     labelKey: 'adv_pie',   fmt: 'pct', asc: false },
   ],
 }
 
@@ -113,6 +125,25 @@ function computeStats(p) {
   const fgm = sum('fgm'), fga = sum('fga')
   const fg3m = sum('fg3m'), fg3a = sum('fg3a')
   const scale = per48.value ? 2 : 1
+  // compute USG% and PIE: estimate team totals across matches this player participated in
+  const matchIds = Array.from(new Set((p.games || []).map(g => g.match_id)))
+  let teamOffEvents = 0
+  let teamImpact = 0
+  for (const mid of matchIds) {
+    for (const oth of players.value) {
+      const og = (oth.games || []).find(x => x.match_id === mid)
+      if (!og) continue
+      const ofga = og.fga || 0, ofta = og.fta || 0, otov = og.tov || 0
+      const opts = og.pts || 0
+      teamOffEvents += (ofga + 0.44 * ofta + otov)
+      const oimpact = opts + (og.fgm || 0) + (og.fg3m || 0) + (og.ftm || 0) + (og.oreb || 0) + (og.stl || 0) + (og.blk || 0) + (og.ast || 0) - ((ofga - (og.fgm || 0)) || 0) - otov
+      teamImpact += Math.max(0, oimpact)
+    }
+  }
+  const playerOffEvents = (p.games || []).reduce((a, g) => a + ((g.fga || 0) + 0.44 * (g.fta || 0) + (g.tov || 0)), 0)
+  const playerImpact = (p.games || []).reduce((a, g) => a + ((g.pts || 0) + (g.fgm || 0) + (g.fg3m || 0) + (g.ftm || 0) + (g.oreb || 0) + (g.stl || 0) + (g.blk || 0) + (g.ast || 0) - ((g.fga || 0) - (g.fgm || 0)) - (g.tov || 0)), 0)
+  const usg = teamOffEvents ? (playerOffEvents / teamOffEvents) : 0
+  const pie = teamImpact ? (playerImpact / teamImpact) : 0
   return {
     id:       p.id,
     name:     p.name,
@@ -128,9 +159,17 @@ function computeStats(p) {
     fgpct:  fga  > 0 ? fgm / fga  : 0,
     fg3pct: fg3a > 0 ? fg3m / fg3a : 0,
     efgpct: fga  > 0 ? (fgm + 0.5 * fg3m) / fga : 0,
+    // advanced
+    asttov: (function() { const a = sum('ast'), t = sum('tov'); return t > 0 ? a / t : (a > 0 ? a : 0) })(),
+    p3rate: fga > 0 ? (sum('fg3a') / fga) : 0,
+    ptsfga: sum('fga') > 0 ? (sum('pts') / sum('fga')) : 0,
+    orebp:  (function() { const miss = sum('fga') - sum('fgm'); return miss > 0 ? (sum('oreb') / miss) : 0 })(),
+    def:    ((sum('stl') + sum('blk')) / n) * scale,
     pts: sum('pts'),
     reb: sum('reb'),
     ast: sum('ast'),
+    usg,
+    pie,
   }
 }
 
@@ -139,7 +178,7 @@ function isRosterMember(player) {
   return player.isRosterMember !== false
 }
 
-const allStats = computed(() => players.value.filter(isRosterMember).map(computeStats).filter(Boolean))
+const allStats = computed(() => players.value.filter(p => isRosterMember(p) && isAllowed(p)).map(computeStats).filter(Boolean))
 
 const ranked = computed(() => {
   const def = currentStatDef.value
