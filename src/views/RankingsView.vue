@@ -58,11 +58,14 @@ import { isAllowed } from '../allowedPlayers.js'
 
 const loading = ref(true)
 const players = ref([])
+const matches = ref([])
 const per48 = ref(false)
 
 onMounted(async () => {
   const res = await fetch(import.meta.env.BASE_URL + 'data/players.json')
   players.value = await res.json()
+  const mr = await fetch(import.meta.env.BASE_URL + 'data/matches.json')
+  matches.value = await mr.json()
   loading.value = false
 })
 
@@ -78,6 +81,7 @@ const statsByGroup = {
   avg: [
     { key: 'ppg',  labelKey: 'rnk_ppg',  fmt: 'dec', asc: false },
     { key: 'rpg',  labelKey: 'rnk_rpg',  fmt: 'dec', asc: false },
+    { key: 'orebpg', labelKey: 'rnk_orebpg', fmt: 'dec', asc: false },
     { key: 'apg',  labelKey: 'rnk_apg',  fmt: 'dec', asc: false },
     { key: 'spg',  labelKey: 'rnk_spg',  fmt: 'dec', asc: false },
     { key: 'bpg',  labelKey: 'rnk_bpg',  fmt: 'dec', asc: false },
@@ -90,7 +94,6 @@ const statsByGroup = {
   ],
   total: [
     { key: 'pts', labelKey: 'rnk_pts', fmt: 'int', asc: false },
-    { key: 'reb', labelKey: 'rnk_reb', fmt: 'int', asc: false },
     { key: 'ast', labelKey: 'rnk_ast', fmt: 'int', asc: false },
   ],
   adv: [
@@ -125,25 +128,31 @@ function computeStats(p) {
   const fgm = sum('fgm'), fga = sum('fga')
   const fg3m = sum('fg3m'), fg3a = sum('fg3a')
   const scale = per48.value ? 2 : 1
-  // compute USG% and PIE: estimate team totals across matches this player participated in
+  // USG%: 只用己方球队进攻事件做分母；PIE: 全场双方所有球员
   const matchIds = Array.from(new Set((p.games || []).map(g => g.match_id)))
-  let teamOffEvents = 0
-  let teamImpact = 0
+  let myTeamOffEvents = 0  // 己方球队 (USG%)
+  let gameImpact = 0       // 全场双方 (PIE)
   for (const mid of matchIds) {
+    const match = matches.value.find(m => m.id === mid)
+    const myTeam = match
+      ? (match.team_a.players.includes(p.id) ? match.team_a.players : match.team_b.players)
+      : null
     for (const oth of players.value) {
       const og = (oth.games || []).find(x => x.match_id === mid)
       if (!og) continue
       const ofga = og.fga || 0, ofta = og.fta || 0, otov = og.tov || 0
       const opts = og.pts || 0
-      teamOffEvents += (ofga + 0.44 * ofta + otov)
+      if (!myTeam || myTeam.includes(oth.id)) {
+        myTeamOffEvents += (ofga + 0.44 * ofta + otov)
+      }
       const oimpact = opts + (og.fgm || 0) + (og.fg3m || 0) + (og.ftm || 0) + (og.oreb || 0) + (og.stl || 0) + (og.blk || 0) + (og.ast || 0) - ((ofga - (og.fgm || 0)) || 0) - otov
-      teamImpact += Math.max(0, oimpact)
+      gameImpact += Math.max(0, oimpact)
     }
   }
   const playerOffEvents = (p.games || []).reduce((a, g) => a + ((g.fga || 0) + 0.44 * (g.fta || 0) + (g.tov || 0)), 0)
   const playerImpact = (p.games || []).reduce((a, g) => a + ((g.pts || 0) + (g.fgm || 0) + (g.fg3m || 0) + (g.ftm || 0) + (g.oreb || 0) + (g.stl || 0) + (g.blk || 0) + (g.ast || 0) - ((g.fga || 0) - (g.fgm || 0)) - (g.tov || 0)), 0)
-  const usg = teamOffEvents ? (playerOffEvents / teamOffEvents) : 0
-  const pie = teamImpact ? (playerImpact / teamImpact) : 0
+  const usg = myTeamOffEvents ? (playerOffEvents / myTeamOffEvents) : 0
+  const pie = gameImpact ? (playerImpact / gameImpact) : 0
   return {
     id:       p.id,
     name:     p.name,
@@ -163,10 +172,26 @@ function computeStats(p) {
     asttov: (function() { const a = sum('ast'), t = sum('tov'); return t > 0 ? a / t : (a > 0 ? a : 0) })(),
     p3rate: fga > 0 ? (sum('fg3a') / fga) : 0,
     ptsfga: sum('fga') > 0 ? (sum('pts') / sum('fga')) : 0,
-    orebp:  (function() { const miss = sum('fga') - sum('fgm'); return miss > 0 ? (sum('oreb') / miss) : 0 })(),
+    orebp:  (function() {
+      let teamMiss = 0
+      for (const gm of g) {
+        const match = matches.value.find(m => m.id === gm.match_id)
+        if (!match) { teamMiss += (gm.fga || 0) - (gm.fgm || 0); continue }
+        const teamArr = match.team_a.players.includes(p.id) ? match.team_a.players : match.team_b.players
+        for (const tid of teamArr) {
+          const tp = players.value.find(x => x.id === tid)
+          if (!tp) continue
+          const tg = tp.games.find(x => x.match_id === gm.match_id)
+          if (!tg) continue
+          teamMiss += (tg.fga || 0) - (tg.fgm || 0)
+        }
+      }
+      return teamMiss > 0 ? (sum('oreb') / teamMiss) : 0
+    })(),
     def:    ((sum('stl') + sum('blk')) / n) * scale,
     pts: sum('pts'),
     reb: sum('reb'),
+    orebpg: (sum('oreb') / n) * scale,
     ast: sum('ast'),
     usg,
     pie,

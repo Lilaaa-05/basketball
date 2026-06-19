@@ -333,6 +333,7 @@ function labelPos(i) {
 // (watch is attached after player/allPlayers are defined)
 const player = ref(null)
 const allPlayers = ref([])
+const allMatches = ref([])
 const loading = ref(true)
 const tab = ref('avg')
 const per48 = ref(false)
@@ -447,27 +448,46 @@ function statValueForPlayer(p, metric) {
     return fga > 0 ? (sum('pts') / fga) : null
   }
   if (metric === 'orebp') {
-    const miss = sum('fga') - sum('fgm')
-    return miss > 0 ? (sum('oreb') / miss * 100) : null
+    let teamMiss = 0
+    for (const g of gs) {
+      const match = allMatches.value.find(m => m.id === g.match_id)
+      if (!match) { teamMiss += (g.fga ?? 0) - (g.fgm ?? 0); continue }
+      const teamArr = match.team_a.players.includes(p.id) ? match.team_a.players : match.team_b.players
+      for (const tid of teamArr) {
+        const tp = allPlayers.value.find(x => x.id === tid)
+        if (!tp) continue
+        const tg = tp.games.find(x => x.match_id === g.match_id)
+        if (!tg) continue
+        teamMiss += (tg.fga ?? 0) - (tg.fgm ?? 0)
+      }
+    }
+    return teamMiss > 0 ? (sum('oreb') / teamMiss * 100) : null
   }
   if (metric === 'def') {
     return ((sum('stl') + sum('blk')) / gs.length) * (per48.value ? 2 : 1)
   }
 
-  // 使用率（USG%）和 PIE 的估算：聚合同场比赛的所有球员数据来近似球队总量
+  // 使用率（USG%）和 PIE 的估算
+  // USG%: 分母只算己方球队进攻事件；PIE: 分母用全场所有球员（双方）
   if (metric === 'usg' || metric === 'pie') {
     const matchIds = Array.from(new Set(gs.map(g => g.match_id)))
-    let teamOffEvents = 0
-    let teamImpact = 0
+    let myTeamOffEvents = 0  // 己方球队只 (USG%)
+    let gameImpact = 0       // 全场双方 (PIE)
     for (const mid of matchIds) {
-      for (const p of allPlayers.value || []) {
-        const pg = (p.games || []).find(x => x.match_id === mid)
+      const match = allMatches.value.find(m => m.id === mid)
+      const myTeam = match
+        ? (match.team_a.players.includes(p.id) ? match.team_a.players : match.team_b.players)
+        : null
+      for (const q of allPlayers.value || []) {
+        const pg = (q.games || []).find(x => x.match_id === mid)
         if (!pg) continue
         const pFga = pg.fga ?? 0, pFta = pg.fta ?? 0, pTov = pg.tov ?? 0
         const pPts = pg.pts ?? 0
-        teamOffEvents += (pFga + 0.44 * pFta + pTov)
+        if (!myTeam || myTeam.includes(q.id)) {
+          myTeamOffEvents += (pFga + 0.44 * pFta + pTov)
+        }
         const pImpact = pPts + (pg.fgm ?? 0) + (pg.fg3m ?? 0) + (pg.ftm ?? 0) + (pg.oreb ?? 0) + (pg.stl ?? 0) + (pg.blk ?? 0) + (pg.ast ?? 0) - ((pg.fga ?? 0) - (pg.fgm ?? 0)) - pTov
-        teamImpact += Math.max(0, pImpact)
+        gameImpact += Math.max(0, pImpact)
       }
     }
 
@@ -475,10 +495,10 @@ function statValueForPlayer(p, metric) {
     const playerImpact = gs.reduce((a, g) => a + ((g.pts ?? 0) + (g.fgm ?? 0) + (g.fg3m ?? 0) + (g.ftm ?? 0) + (g.oreb ?? 0) + (g.stl ?? 0) + (g.blk ?? 0) + (g.ast ?? 0) - ((g.fga ?? 0) - (g.fgm ?? 0)) - (g.tov ?? 0)), 0)
 
     if (metric === 'usg') {
-      return teamOffEvents ? (playerOffEvents / teamOffEvents * 100) : null
+      return myTeamOffEvents ? (playerOffEvents / myTeamOffEvents * 100) : null
     }
     if (metric === 'pie') {
-      return teamImpact ? (playerImpact / teamImpact * 100) : null
+      return gameImpact ? (playerImpact / gameImpact * 100) : null
     }
   }
 
@@ -512,12 +532,25 @@ function playerAdvStats() {
   const sum = k => gs.reduce((a, g) => a + (g[k] ?? 0), 0)
   const fgm = sum('fgm'), fga = sum('fga'), fg3m = sum('fg3m')
   const ast  = sum('ast'), tov = sum('tov'), oreb = sum('oreb')
-  const miss = fga - fgm
   const efgNum = fga  ? ((fgm + 0.5 * fg3m) / fga * 100) : null
   const asttovNum = tov ? (ast / tov) : (ast > 0 ? Number.POSITIVE_INFINITY : null)
   const p3rateNum = fga ? (sum('fg3a') / fga * 100) : null
   const ptsfgaNum = fga ? (sum('pts') / fga) : null
-  const orbpNum = miss ? (oreb / miss * 100) : null
+  let teamMissOreb = 0
+  for (const g of gs) {
+    const match = allMatches.value.find(m => m.id === g.match_id)
+    if (!match) { teamMissOreb += (g.fga ?? 0) - (g.fgm ?? 0); continue }
+    const pid = player.value.id
+    const teamArr = match.team_a.players.includes(pid) ? match.team_a.players : match.team_b.players
+    for (const tid of teamArr) {
+      const tp = allPlayers.value.find(x => x.id === tid)
+      if (!tp) continue
+      const tg = tp.games.find(x => x.match_id === g.match_id)
+      if (!tg) continue
+      teamMissOreb += (tg.fga ?? 0) - (tg.fgm ?? 0)
+    }
+  }
+  const orbpNum = teamMissOreb > 0 ? (oreb / teamMissOreb * 100) : null
   const defNum = ((sum('stl') + sum('blk')) / gs.length) * (per48.value ? 2 : 1)
   const fmtPct = v => v == null ? '-' : v.toFixed(1) + '%'
   const fmtDec = v => v == null ? '-' : (v === Number.POSITIVE_INFINITY ? '∞' : v.toFixed(2))
@@ -526,18 +559,25 @@ function playerAdvStats() {
   const fta = sum('fta')
   const tsNum = (fga + 0.44 * fta) ? (sum('pts') / (2 * (fga + 0.44 * fta)) * 100) : null
 
-  // Helper: for USG% and PIE we estimate team totals by summing allPlayers' contributions for the same match ids
+  // Helper: USG% 只用己方球队；PIE 用全场双方
   const matchIds = Array.from(new Set(gs.map(g => g.match_id)))
-  const teamTotals = { offEvents: 0, impact: 0 }
+  let myTeamOffEvents = 0  // 己方球队 (USG%)
+  let gameImpact = 0       // 全场双方 (PIE)
   for (const mid of matchIds) {
-    for (const p of allPlayers.value || []) {
-      const pg = (p.games || []).find(x => x.match_id === mid)
+    const match = allMatches.value.find(m => m.id === mid)
+    const myTeam = match
+      ? (match.team_a.players.includes(player.value.id) ? match.team_a.players : match.team_b.players)
+      : null
+    for (const q of allPlayers.value || []) {
+      const pg = (q.games || []).find(x => x.match_id === mid)
       if (!pg) continue
       const pFga = pg.fga ?? 0, pFta = pg.fta ?? 0, pTov = pg.tov ?? 0
       const pPts = pg.pts ?? 0
-      teamTotals.offEvents += (pFga + 0.44 * pFta + pTov)
+      if (!myTeam || myTeam.includes(q.id)) {
+        myTeamOffEvents += (pFga + 0.44 * pFta + pTov)
+      }
       const pImpact = pPts + (pg.fgm ?? 0) + (pg.fg3m ?? 0) + (pg.ftm ?? 0) + (pg.oreb ?? 0) + (pg.stl ?? 0) + (pg.blk ?? 0) + (pg.ast ?? 0) - ((pFga - (pg.fgm ?? 0)) || 0) - pTov
-      teamTotals.impact += Math.max(0, pImpact)
+      gameImpact += Math.max(0, pImpact)
     }
   }
 
@@ -545,8 +585,8 @@ function playerAdvStats() {
   const playerOffEvents = gs.reduce((a, g) => a + ((g.fga ?? 0) + 0.44 * (g.fta ?? 0) + (g.tov ?? 0)), 0)
   const playerImpact = gs.reduce((a, g) => a + ((g.pts ?? 0) + (g.fgm ?? 0) + (g.fg3m ?? 0) + (g.ftm ?? 0) + (g.oreb ?? 0) + (g.stl ?? 0) + (g.blk ?? 0) + (g.ast ?? 0) - ((g.fga ?? 0) - (g.fgm ?? 0)) - (g.tov ?? 0)), 0)
 
-  const usgNum = teamTotals.offEvents ? (playerOffEvents / teamTotals.offEvents * 100) : null
-  const pieNum = teamTotals.impact ? (playerImpact / teamTotals.impact * 100) : null
+  const usgNum = myTeamOffEvents ? (playerOffEvents / myTeamOffEvents * 100) : null
+  const pieNum = gameImpact ? (playerImpact / gameImpact * 100) : null
 
   // Use precomputed values if present on player object
   const perNum = player.value?.per ?? null
@@ -576,6 +616,7 @@ onMounted(async () => {
   const mr = await fetch(import.meta.env.BASE_URL + 'data/matches.json')
   const ms = await mr.json()
   ms.forEach(m => { matchLabels[m.id] = m.label || m.id })
+  allMatches.value = ms
 })
 function matchLabel(id) { return matchLabels[id] || id }
 </script>
