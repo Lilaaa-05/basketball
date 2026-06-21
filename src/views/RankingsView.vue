@@ -94,6 +94,7 @@ const statsByGroup = {
   ],
   total: [
     { key: 'pts', labelKey: 'rnk_pts', fmt: 'int', asc: false },
+    { key: 'reb', labelKey: 'rnk_reb', fmt: 'int', asc: false },
     { key: 'ast', labelKey: 'rnk_ast', fmt: 'int', asc: false },
   ],
   adv: [
