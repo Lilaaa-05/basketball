@@ -229,32 +229,32 @@
           <!-- Report Header -->
           <div class="ai-report-header">
             <div class="ai-report-icon">🤖</div>
-            <div class="ai-report-info">
-              <div class="ai-report-title">AI 教练指导报告</div>
-              <div class="ai-report-sub">基于 {{ matches.length }} 场比赛数据 · {{ aiCoachAnalysis.record }}</div>
-            </div>
+              <div class="ai-report-info">
+                <div class="ai-report-title">{{ t('ai_title') }}</div>
+                <div class="ai-report-sub">{{ tr('ai_sub_record', { n: matches.length, record: aiCoachAnalysis.record }) }}</div>
+              </div>
             <div class="ai-grade-badge">
               <div class="ai-grade-val" :style="{ color: aiCoachAnalysis.gradeColor }">{{ aiCoachAnalysis.grade }}</div>
-              <div class="ai-grade-label">综合评级</div>
+              <div class="ai-grade-label">{{ t('ai_grade_label') }}</div>
             </div>
           </div>
 
           <!-- Summary -->
           <div class="ai-summary-box">
-            <div class="ai-summary-label">📊 赛季总结</div>
+            <div class="ai-summary-label">📊 {{ t('ai_summary_label') }}</div>
             <div class="ai-summary-text">{{ aiCoachAnalysis.summary }}</div>
             <div class="ai-summary-stats">
               <div class="ai-sum-stat">
                 <div class="ai-sum-num">{{ aiCoachAnalysis.wpct }}</div>
-                <div class="ai-sum-lbl">胜率</div>
+                <div class="ai-sum-lbl">{{ t('ai_stat_wpct') }}</div>
               </div>
               <div class="ai-sum-stat">
                 <div class="ai-sum-num" :style="{ color: aiCoachAnalysis.diffColor }">{{ aiCoachAnalysis.diff }}</div>
-                <div class="ai-sum-lbl">场均得失分差</div>
+                <div class="ai-sum-lbl">{{ t('ai_stat_diff') }}</div>
               </div>
               <div class="ai-sum-stat">
                 <div class="ai-sum-num">{{ matches.length }}</div>
-                <div class="ai-sum-lbl">场比赛</div>
+                <div class="ai-sum-lbl">{{ t('ai_stat_games') }}</div>
               </div>
             </div>
           </div>
@@ -262,7 +262,7 @@
           <!-- Strengths & Weaknesses -->
           <div class="ai-sw-grid">
             <div class="ai-sw-col">
-              <div class="ai-sw-header ai-sw-str">💪 球队优势</div>
+              <div class="ai-sw-header ai-sw-str">💪 {{ t('ai_strengths_title') }}</div>
               <div class="ai-sw-items">
                 <div v-for="s in aiCoachAnalysis.strengths" :key="s.title" class="ai-sw-item">
                   <span class="ai-sw-ico">{{ s.icon }}</span>
@@ -271,11 +271,11 @@
                     <div class="ai-sw-desc">{{ s.desc }}</div>
                   </div>
                 </div>
-                <div v-if="!aiCoachAnalysis.strengths.length" class="ai-sw-empty">持续努力，优势正在积累！</div>
+                <div v-if="!aiCoachAnalysis.strengths.length" class="ai-sw-empty">{{ t('ai_strengths_empty') }}</div>
               </div>
             </div>
             <div class="ai-sw-col">
-              <div class="ai-sw-header ai-sw-wk">⚠️ 待改进点</div>
+              <div class="ai-sw-header ai-sw-wk">⚠️ {{ t('ai_weaknesses_title') }}</div>
               <div class="ai-sw-items">
                 <div v-for="w in aiCoachAnalysis.weaknesses" :key="w.title" class="ai-sw-item">
                   <span class="ai-sw-ico">{{ w.icon }}</span>
@@ -284,14 +284,14 @@
                     <div class="ai-sw-desc">{{ w.desc }}</div>
                   </div>
                 </div>
-                <div v-if="!aiCoachAnalysis.weaknesses.length" class="ai-sw-empty">🎉 整体表现出色！</div>
+                <div v-if="!aiCoachAnalysis.weaknesses.length" class="ai-sw-empty">{{ t('ai_weaknesses_empty') }}</div>
               </div>
             </div>
           </div>
 
           <!-- Player Spotlights -->
           <div v-if="aiCoachAnalysis.playerSpotlights.length" class="ai-section">
-            <div class="ai-section-title">🌟 球员聚焦分析</div>
+            <div class="ai-section-title">🌟 {{ t('ai_players_title') }}</div>
             <div class="ai-players-grid">
               <div v-for="p in aiCoachAnalysis.playerSpotlights" :key="p.name" class="ai-player-card">
                 <div class="ai-pc-top">
@@ -309,7 +309,7 @@
 
           <!-- Tactical Recommendations -->
           <div v-if="aiCoachAnalysis.recommendations.length" class="ai-section">
-            <div class="ai-section-title">📋 战术建议</div>
+            <div class="ai-section-title">📋 {{ t('ai_recommendations_title') }}</div>
             <div class="ai-recs">
               <div v-for="(r, i) in aiCoachAnalysis.recommendations" :key="r.title"
                    class="ai-rec" :class="'ai-rec--' + r.priority">
@@ -319,18 +319,16 @@
                   <div class="ai-rec-detail">{{ r.detail }}</div>
                 </div>
                 <div class="ai-rec-badge" :class="'ai-badge--' + r.priority">
-                  {{ r.priority === 'high' ? '高优先' : r.priority === 'medium' ? '重要' : '建议' }}
+                  {{ r.priority === 'high' ? t('ai_priority_high') : r.priority === 'medium' ? t('ai_priority_medium') : t('ai_priority_low') }}
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Footer -->
-          <div class="ai-footer-note">
-            📊 分析基于球队与球员统计数据 · 回合数估算：出手 − 进攻篮板 + 失误
-          </div>
+          <div class="ai-footer-note">📊 {{ t('ai_footer_note') }}</div>
         </div>
-        <div v-else class="ai-no-data">暂无足够数据生成分析报告</div>
+        <div v-else class="ai-no-data">{{ t('ai_no_data') }}</div>
       </div>
     </template>
   </div>
@@ -339,6 +337,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { t } from '../i18n.js'
+
+function tr(key, vars = {}) {
+  let s = t(key)
+  for (const k in vars) {
+    s = s.replace(new RegExp('\\{' + k + '\\}', 'g'), vars[k])
+  }
+  return s
+}
 
 const loading = ref(true)
 const matches = ref([])    // 雪谷火箭 matches (always team_a)
@@ -559,76 +565,76 @@ const aiCoachAnalysis = computed(() => {
 
   // — Shooting efficiency —
   if (fgPct >= 42) {
-    strengths.push({ icon: '🎯', title: '投篮效率扎实', desc: `球队场均FG% ${fgPct.toFixed(1)}%，整体出手质量高，减少了无效进攻回合。` })
+    strengths.push({ icon: '🎯', title: t('ai_title_shooting_good'), desc: tr('ai_strength_shooting_good', { fgPct: fgPct.toFixed(1) }) })
   } else if (fgPct < 35) {
-    weaknesses.push({ icon: '🎯', title: '投篮效率偏低', desc: `场均FG% ${fgPct.toFixed(1)}% 低于及格线，出手时机选择需要优化。` })
-    recommendations.push({ priority: 'high', icon: '📋', title: '提升出手质量', detail: `当前FG% ${fgPct.toFixed(1)}%。建议加强传切配合，优先制造空位后再出手，减少单打硬来的低效进攻。` })
+    weaknesses.push({ icon: '🎯', title: t('ai_title_shooting_low'), desc: tr('ai_weak_shooting_low', { fgPct: fgPct.toFixed(1) }) })
+    recommendations.push({ priority: 'high', icon: '📋', title: t('ai_rec_improve_shot'), detail: tr('ai_rec_improve_shot_detail', { fgPct: fgPct.toFixed(1) }) })
   }
 
   // — Three-point shooting —
   if (fg3Pct >= 33) {
-    strengths.push({ icon: '3️⃣', title: '三分威胁强', desc: `三分命中率 ${fg3Pct.toFixed(1)}%，有效拉开防线，为突破创造空间。` })
+    strengths.push({ icon: '3️⃣', title: t('ai_title_3p_good'), desc: tr('ai_strength_3p_good', { fg3Pct: fg3Pct.toFixed(1) }) })
   } else if (fg3Pct < 25 && fg3a > 4) {
-    weaknesses.push({ icon: '3️⃣', title: '三分出手低效', desc: `三分命中率 ${fg3Pct.toFixed(1)}%，场均 ${fg3a.toFixed(1)} 次出手但转化率低，消耗大量进攻资源。` })
-    recommendations.push({ priority: 'medium', icon: '🏹', title: '优化三分策略', detail: `三分命中率 ${fg3Pct.toFixed(1)}%。建议缩减冲动型远投，将外线机会留给手感更稳的球员，多利用内线空间。` })
+    weaknesses.push({ icon: '3️⃣', title: t('ai_title_3p_low'), desc: tr('ai_weak_3p_low', { fg3Pct: fg3Pct.toFixed(1), fg3a: fg3a.toFixed(1) }) })
+    recommendations.push({ priority: 'medium', icon: '🏹', title: t('ai_rec_3p_strategy'), detail: tr('ai_rec_3p_strategy_detail', { fg3Pct: fg3Pct.toFixed(1) }) })
   }
 
   // — Ball movement & turnovers —
   if (astTov >= 2.0) {
-    strengths.push({ icon: '🤝', title: '传控出色', desc: `助攻失误比 ${astTov.toFixed(1)}，持球决策优秀，团队配合流畅。` })
+    strengths.push({ icon: '🤝', title: t('ai_title_asttov_good'), desc: tr('ai_strength_asttov', { astTov: astTov.toFixed(1) }) })
   } else if (astTov < 1.2) {
-    weaknesses.push({ icon: '🤝', title: '持球失误偏多', desc: `助攻失误比 ${astTov.toFixed(1)}，场均 ${tov.toFixed(1)} 次失误，给对手额外得分机会。` })
-    recommendations.push({ priority: 'high', icon: '🛡️', title: '控制失误', detail: `场均 ${tov.toFixed(1)} 次失误，助攻失误比 ${astTov.toFixed(1)}。建议快攻时适当放缓节奏，以稳定的阵地进攻代替仓促传切。` })
+    weaknesses.push({ icon: '🤝', title: t('ai_title_asttov_bad'), desc: tr('ai_weak_asttov', { astTov: astTov.toFixed(1), tov: tov.toFixed(1) }) })
+    recommendations.push({ priority: 'high', icon: '🛡️', title: t('ai_rec_control_turnovers'), detail: tr('ai_rec_control_turnovers_detail', { tov: tov.toFixed(1), astTov: astTov.toFixed(1) }) })
   }
 
   // — Offensive rebounding —
   if (oreb >= 5) {
-    strengths.push({ icon: '💪', title: '二次进攻能力强', desc: `场均 ${oreb.toFixed(1)} 个进攻篮板，持续给对手施压，创造更多得分机会。` })
+    strengths.push({ icon: '💪', title: t('ai_title_oreb'), desc: tr('ai_strength_oreb', { oreb: oreb.toFixed(1) }) })
   }
 
   // — Steals / active defense —
   if (stl >= 4) {
-    strengths.push({ icon: '🛡️', title: '主动防守积极', desc: `场均 ${stl.toFixed(1)} 次抢断，防守强度高，能快速转化为快攻得分。` })
+    strengths.push({ icon: '🛡️', title: t('ai_title_stl_good'), desc: tr('ai_strength_stl', { stl: stl.toFixed(1) }) })
   } else if (stl < 2) {
-    weaknesses.push({ icon: '🛡️', title: '主动防守不足', desc: `场均仅 ${stl.toFixed(1)} 次抢断，防守压迫力弱，难以通过防守带动进攻节奏。` })
+    weaknesses.push({ icon: '🛡️', title: t('ai_title_stl_bad'), desc: tr('ai_weak_stl', { stl: stl.toFixed(1) }) })
   }
 
   // — Rim protection —
   if (blk >= 2) {
-    strengths.push({ icon: '🚫', title: '内线护框到位', desc: `场均 ${blk.toFixed(1)} 次盖帽，有效抑制对手内线进攻，是防守的重要威慑。` })
+    strengths.push({ icon: '🚫', title: t('ai_title_blk_good'), desc: tr('ai_strength_blk', { blk: blk.toFixed(1) }) })
   } else if (blk < 1) {
-    weaknesses.push({ icon: '🚫', title: '护框威慑不足', desc: `场均 ${blk.toFixed(1)} 次盖帽，内线防守较脆弱，对手可轻易突入油漆区得分。` })
-    recommendations.push({ priority: 'medium', icon: '🏰', title: '加强内线协防', detail: `场均 ${blk.toFixed(1)} 次盖帽偏低。建议内线球员强化协防意识，遇到突破时及时轮转补防，而非消极等待。` })
+    weaknesses.push({ icon: '🚫', title: t('ai_title_blk_bad'), desc: tr('ai_weak_blk', { blk: blk.toFixed(1) }) })
+    recommendations.push({ priority: 'medium', icon: '🏰', title: t('ai_rec_interior_help'), detail: tr('ai_rec_interior_help_detail', { blk: blk.toFixed(1) }) })
   }
 
   // — Scoring margin —
   if (diff > 5) {
-    strengths.push({ icon: '🏆', title: '得失分优势明显', desc: `场均净胜分 +${diff.toFixed(1)}，球队竞争力在联赛中处于领先位置。` })
+    strengths.push({ icon: '🏆', title: t('ai_title_margin_good'), desc: tr('ai_strength_margin', { diff: '+' + diff.toFixed(1) }) })
   } else if (diff < -3) {
-    weaknesses.push({ icon: '📉', title: '失分偏多', desc: `场均得失分差 ${diff.toFixed(1)}，防守端需要系统性加强。` })
-    recommendations.push({ priority: 'high', icon: '🔒', title: '全面提升防守强度', detail: `当前失分差 ${diff.toFixed(1)}。建议强化防守轮转训练，减少给对手的空位机会，可针对对手核心球员布置重点包夹。` })
+    weaknesses.push({ icon: '📉', title: t('ai_title_margin_bad'), desc: tr('ai_weak_margin', { diff: diff.toFixed(1) }) })
+    recommendations.push({ priority: 'high', icon: '🔒', title: t('ai_rec_control_turnovers'), detail: tr('ai_rec_interior_help_detail', { diff: diff.toFixed(1) }) })
   }
 
   // — Team ball movement —
   if (ast >= 10) {
-    strengths.push({ icon: '🎭', title: '团队篮球意识好', desc: `场均 ${ast.toFixed(1)} 次助攻，积极的传球文化让进攻更多样化。` })
+    strengths.push({ icon: '🎭', title: t('ai_title_team_ball'), desc: tr('ai_strength_asttov', { astTov: astTov.toFixed(1) }) })
   }
 
   // — Three-point rate —
   if (fg3Rate > 55) {
-    recommendations.push({ priority: 'low', icon: '⚖️', title: '平衡进攻结构', detail: `三分出手占总投篮 ${fg3Rate.toFixed(0)}%，比例偏高。建议增加中距离及内线进攻，以内外结合让防守更难针对。` })
+    recommendations.push({ priority: 'low', icon: '⚖️', title: t('ai_rec_balance_attack'), detail: tr('ai_rec_balance_attack_detail', { rate: fg3Rate.toFixed(0) }) })
   }
 
   // — OREB utilization tip —
   if (oreb >= 5) {
-    recommendations.push({ priority: 'low', icon: '🏃', title: '二次进攻转化', detail: `场均 ${oreb.toFixed(1)} 个进攻篮板是宝贵资源。抢到进攻板后不急于强行出手，重新组织阵地进攻可获得更高质量的机会。` })
+    recommendations.push({ priority: 'low', icon: '🏃', title: t('ai_rec_rebound_convert'), detail: tr('ai_rec_rebound_convert_detail', { oreb: oreb.toFixed(1) }) })
   }
 
   // — High-turnover player —
   if (rosterPlayers.length > 2) {
     const highTov = [...rosterPlayers].sort((a, b) => b.topg - a.topg)[0]
     if (highTov && highTov.topg >= 3) {
-      recommendations.push({ priority: 'medium', icon: '⚠️', title: `关注 ${highTov.name} 的持球决策`, detail: `${highTov.name} 场均 ${highTov.topg.toFixed(1)} 次失误居全队最高。建议减少其强对抗下的单打，通过更多传切配合降低失误风险。` })
+      recommendations.push({ priority: 'medium', icon: '⚠️', title: tr('ai_rec_player_tov', { name: highTov.name }), detail: tr('ai_rec_player_tov_detail', { name: highTov.name, topg: highTov.topg.toFixed(1) }) })
     }
   }
 
@@ -646,31 +652,31 @@ const aiCoachAnalysis = computed(() => {
 
     playerSpotlights.push({
       name: topScorer.name,
-      role: '得分核心',
+      role: t('ai_role_scorer'),
       icon: '🌟',
       stat: `${topScorer.ppg.toFixed(1)} PPG · ${topScorer.fgPct.toFixed(1)}% FG`,
       insight: topScorer.fgPct < 35
-        ? `${topScorer.name}是球队得分领袖，但命中率（${topScorer.fgPct.toFixed(1)}%）仍有改善空间。建议借助掩护制造空位出手，减少对抗状态下的强行进攻。`
-        : `${topScorer.name}是球队的进攻支柱，场均 ${topScorer.ppg.toFixed(1)} 分且命中率稳定。应持续为其创造空切和高位掩护机会，最大化产出。`,
+        ? tr('ai_player_insight_scorer_low', { name: topScorer.name, fgPct: topScorer.fgPct.toFixed(1) })
+        : tr('ai_player_insight_scorer_high', { name: topScorer.name, ppg: topScorer.ppg.toFixed(1) }),
     })
 
     if (best3p && best3p.id !== topScorer.id && best3p.fg3Pct >= 28) {
       playerSpotlights.push({
         name: best3p.name,
-        role: '三分射手',
+        role: t('ai_role_shooter'),
         icon: '🎯',
         stat: `${best3p.fg3Pct.toFixed(1)}% 3P · ${best3p.fg3aPerGame.toFixed(1)} 3PA`,
-        insight: `${best3p.name}是球队最稳定的外线射手，三分命中率 ${best3p.fg3Pct.toFixed(1)}%。战术上应多为其设计无球跑动和挡拆配合，提高空位出手比例。`,
+        insight: tr('ai_player_insight_shooter', { name: best3p.name, fg3Pct: best3p.fg3Pct.toFixed(1) }),
       })
     }
 
     if (topAssister.id !== topScorer.id && topAssister.apg >= 3) {
       playerSpotlights.push({
         name: topAssister.name,
-        role: '场上指挥官',
+        role: t('ai_role_assister'),
         icon: '🎭',
         stat: `${topAssister.apg.toFixed(1)} APG · ${topAssister.spg.toFixed(1)} SPG`,
-        insight: `${topAssister.name}是球队组织核心，场均 ${topAssister.apg.toFixed(1)} 次助攻调动全队。建议赋予其更多组织权，通过传导激活其他球员。`,
+        insight: tr('ai_player_insight_assister', { name: topAssister.name, apg: topAssister.apg.toFixed(1) }),
       })
     }
   }
@@ -689,7 +695,7 @@ const aiCoachAnalysis = computed(() => {
 
   let summary
   if (wpct >= 70 && diff >= 5) {
-    summary = `雪谷火箭以 ${wpct.toFixed(0)}% 的胜率高居榜首，进攻火力充沛，防守同样稳固。球队当前状态正佳，需要在保持体系的同时打磨细节，向总冠军冲击。`
+    summary = tr('ai_summary_champion', { wpct: wpct.toFixed(0) })
   } else if (wpct >= 50 && diff >= 0) {
     summary = `雪谷火箭战绩 ${winsCount}胜${lossCount}负，处于争夺季后赛的关键位置。球队整体运转良好，但在失误控制与投篮效率上仍有精进空间，保持专注将换来更稳定的胜率。`
   } else if (diff < -3) {
@@ -964,7 +970,7 @@ const aiCoachAnalysis = computed(() => {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 26px;
   font-weight: 800;
-  color: #fff;
+  color: #d00d0d;
   line-height: 1;
 }
 .ai-sum-lbl {
