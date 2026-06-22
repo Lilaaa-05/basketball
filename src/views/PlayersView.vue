@@ -80,7 +80,7 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import { t } from '../i18n.js'
-import { isAllowed } from '../allowedPlayers.js'
+import { getPlayersViewData } from '../dataService.js'
 
 const baseUrl = import.meta.env.BASE_URL
 const players = ref([])
@@ -89,14 +89,14 @@ const statMode = ref('avg')
 
 const displayPlayers = computed(() => {
   return players.value
-    .filter(isRosterMember)
-    .filter(isAllowed)
+    .filter(p => p.primaryTeamId === 'keepb')
+    .filter(p => p.isPublic)
+    .filter(p => p.playerStatus !== 'inactive')
     .sort((a, b) => numStat(b, 'pts') - numStat(a, 'pts'))
 })
 
 onMounted(async () => {
-  const res = await fetch(import.meta.env.BASE_URL + 'data/players.json')
-  players.value = await res.json()
+  players.value = await getPlayersViewData()
   loading.value = false
 })
 
@@ -116,11 +116,6 @@ function per48(player, key) {
 function statValue(player, key) {
   if (statMode.value === 'per48') return per48(player, key)
   return avg(player, key)
-}
-
-function isRosterMember(player) {
-  if (player.playerType) return player.playerType === 'keepb'
-  return player.isRosterMember !== false
 }
 
 function numStat(player, key) {

@@ -337,6 +337,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { t } from '../i18n.js'
+import { getTeamViewData } from '../dataService.js'
 
 function tr(key, vars = {}) {
   let s = t(key)
@@ -352,15 +353,9 @@ const allPlayers = ref([])
 const tab = ref('avg')
 
 onMounted(async () => {
-  const [mr, pr] = await Promise.all([
-    fetch(import.meta.env.BASE_URL + 'data/matches.json'),
-    fetch(import.meta.env.BASE_URL + 'data/players.json'),
-  ])
-  const allMatches = await mr.json()
-  allPlayers.value = await pr.json()
-
-  // 雪谷火箭 is always team_a
-  matches.value = allMatches.filter(m => m.team_a?.name === '雪谷火箭')
+  const data = await getTeamViewData('keepb')
+  allPlayers.value = data.players
+  matches.value = data.matches
   loading.value = false
 })
 

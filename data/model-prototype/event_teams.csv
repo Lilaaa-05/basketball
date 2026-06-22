@@ -1,3 +1,0 @@
-event_team_id,event_id,side,team_id,team_name_snapshot,score,result,is_primary_side,sort_order,notes
-g6_a,g6,A,keepb,雪谷火箭,26,loss,true,1,
-g6_b,g6,B,gbc,G.B.C.,33,win,false,2,

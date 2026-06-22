@@ -1,0 +1,7 @@
+﻿event_id,event_date,event_type,side_mode,title,display_group,team_a_id,team_a_score,team_b_id,team_b_score,win_side,mvp_player_id,video_url,notes
+g1,2026-05-17,official_match,two_sides,Game 1,old,keepb,48,gbc,25,a,harada,https://youtu.be/3ETz4PEOglA,
+g2,2026-05-17,official_match,two_sides,Game 2,old,keepb,40,gbc,27,a,g,https://youtu.be/0BEFokIuxR8,
+g3,2026-05-31,official_match,two_sides,Game 3,old,keepb,46,gbc,33,a,g,https://youtu.be/4EaMFD6x6VI,
+g4,2026-05-31,official_match,two_sides,Game 4,old,keepb,27,gbc,22,a,g,https://youtu.be/WzyqcwSryoQ,
+g5,2026-06-14,official_match,two_sides,Game 5,latest,keepb,33,gbc,27,a,g,https://youtu.be/9qgJ-rIFCgU,
+g6,2026-06-14,official_match,two_sides,Game 6,latest,keepb,26,gbc,33,b,feng,https://youtu.be/TbxW3NLmnHU,
