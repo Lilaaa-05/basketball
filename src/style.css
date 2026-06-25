@@ -1353,6 +1353,12 @@ a { color: inherit; text-decoration: none; }
 .gc-box-player { display: flex; align-items: center; gap: 8px; }
 .gc-box-num { font-size: 10px; color: var(--text-3); min-width: 20px; text-align: right; }
 .gc-box-player a:hover { color: var(--accent); }
+.gc-total-row td {
+  background: #fafafa;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 700;
+}
 
 /* ── advanced stats panel ─────────────────────────────── */
 .gc-adv {
@@ -1416,6 +1422,8 @@ a { color: inherit; text-decoration: none; }
 }
 .gc-adv-val.adv-pos { color: #16a34a; }
 .gc-adv-val.adv-neg { color: var(--accent-2); }
+.adv-pos { color: #16a34a !important; }
+.adv-neg { color: var(--accent-2) !important; }
 .gc-adv-desc {
   font-size: 10px;
   color: var(--text-3);
@@ -1426,6 +1434,51 @@ a { color: inherit; text-decoration: none; }
   font-size: 10px;
   color: var(--text-3);
   letter-spacing: .3px;
+}
+.gc-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.gc-compare-table th {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  white-space: nowrap;
+}
+.gc-compare-table th:first-child { text-align: left; }
+.gc-compare-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: right;
+  color: var(--text);
+  font-weight: 700;
+}
+.gc-compare-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+}
+.gc-compare-table tr:last-child td { border-bottom: none; }
+.gc-compare-abbr {
+  display: inline-block;
+  min-width: 48px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: var(--text-2);
+  text-transform: uppercase;
+}
+.gc-compare-label {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 500;
 }
 
 /* ── player career totals table ───────────────────────── */
