@@ -1,5 +1,5 @@
 <template>
-  <div class="page">
+  <div class="page training-page">
     <div class="section-header">{{ t('training_title') }}</div>
 
     <div v-if="loading" class="loading">{{ t('loading') }}</div>

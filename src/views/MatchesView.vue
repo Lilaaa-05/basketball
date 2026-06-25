@@ -1,5 +1,5 @@
 <template>
-  <div class="page">
+  <div class="page matches-page">
     <div class="section-header">{{ t('matches_title') }}</div>
 
     <!-- latest match photo banner -->
@@ -149,6 +149,7 @@
 
             <!-- team A -->
             <div class="gc-box-team-label">{{ teamName(m.team_a.name) }}</div>
+            <div class="gc-table-scroll">
             <table class="gc-box-table">
               <thead>
                 <tr>
@@ -194,8 +195,10 @@
                 </tr>
               </tbody>
             </table>
+            </div>
             <!-- team B -->
             <div class="gc-box-team-label" style="margin-top:4px">{{ teamName(m.team_b.name) }}</div>
+            <div class="gc-table-scroll">
             <table class="gc-box-table">
               <thead>
                 <tr>
@@ -241,6 +244,7 @@
                 </tr>
               </tbody>
             </table>
+            </div>
             <!-- advanced stats -->
             <div class="gc-adv">
               <div class="gc-adv-header">
@@ -369,6 +373,7 @@
               <Transition name="slide">
                 <div v-if="expanded.has(m.id)" class="gc-box">
                   <div class="gc-box-team-label">{{ teamName(m.team_a.name) }}</div>
+                  <div class="gc-table-scroll">
                   <table class="gc-box-table">
                     <thead>
                       <tr>
@@ -414,7 +419,9 @@
                       </tr>
                     </tbody>
                   </table>
+                  </div>
                   <div class="gc-box-team-label" style="margin-top:4px">{{ teamName(m.team_b.name) }}</div>
+                  <div class="gc-table-scroll">
                   <table class="gc-box-table">
                     <thead>
                       <tr>
@@ -460,6 +467,7 @@
                       </tr>
                     </tbody>
                   </table>
+                  </div>
                   <div class="gc-adv">
                     <div class="gc-adv-header">
                       <span class="gc-adv-title">{{ t('adv_section') }}</span>

@@ -184,10 +184,10 @@
                 <th>{{ t('g_th_match') }}</th>
                 <th>{{ t('team_th_result') }}</th>
                 <th>{{ t('team_th_score') }}</th>
-                <th>PTS</th><th>REB</th><th>OREB</th><th>AST</th>
-                <th>STL</th><th>BLK</th><th>TOV</th>
-                <th>FGM</th><th>FGA</th><th>FG%</th>
+                <th>PTS</th><th>FGM</th><th>FGA</th><th>FG%</th>
                 <th>3PM</th><th>3PA</th><th>3P%</th><th>eFG%</th>
+                <th>REB</th><th>OREB</th><th>AST</th>
+                <th>STL</th><th>BLK</th><th>TOV</th>
               </tr>
             </thead>
             <tbody>
@@ -204,12 +204,6 @@
                   <span :class="!row.win ? 'score-win' : 'score-loss'">{{ row.oppScore }}</span>
                 </td>
                 <td class="g-pts">{{ row.pts }}</td>
-                <td>{{ row.reb }}</td>
-                <td>{{ row.oreb }}</td>
-                <td>{{ row.ast }}</td>
-                <td>{{ row.stl }}</td>
-                <td>{{ row.blk }}</td>
-                <td>{{ row.tov }}</td>
                 <td>{{ row.fgm }}</td>
                 <td>{{ row.fga }}</td>
                 <td>{{ row.fga ? (row.fgm / row.fga * 100).toFixed(0) + '%' : '-' }}</td>
@@ -217,6 +211,12 @@
                 <td>{{ row.fg3a }}</td>
                 <td>{{ row.fg3a ? (row.fg3m / row.fg3a * 100).toFixed(0) + '%' : '-' }}</td>
                 <td>{{ row.fga ? ((row.fgm + 0.5 * row.fg3m) / row.fga * 100).toFixed(0) + '%' : '-' }}</td>
+                <td>{{ row.reb }}</td>
+                <td>{{ row.oreb }}</td>
+                <td>{{ row.ast }}</td>
+                <td>{{ row.stl }}</td>
+                <td>{{ row.blk }}</td>
+                <td>{{ row.tov }}</td>
               </tr>
             </tbody>
           </table>
