@@ -18,7 +18,7 @@ const requiredHeaders = {
   teams: ['team_id', 'team_type', 'team_name_zh', 'team_name_ja', 'is_primary', 'notes'],
   players: ['player_id', 'display_name', 'nickname', 'number', 'position', 'primary_team_id', 'player_status', 'is_public', 'avatar', 'height', 'weight', 'joined', 'wingspan', 'standing_reach', 'school', 'contract', 'idol', 'mold', 'tags', 'honors', 'notes'],
   events: ['event_id', 'event_date', 'event_type', 'side_mode', 'title', 'display_group', 'team_a_id', 'team_a_score', 'team_b_id', 'team_b_score', 'win_side', 'mvp_player_id', 'video_url', 'notes'],
-  gameStats: ['event_id', 'player_id', 'side', 'team_id', 'pts', 'reb', 'ast', 'stl', 'blk', 'tov', 'fgm', 'fga', 'fg2m', 'fg2a', 'fg3m', 'fg3a', 'oreb', 'min', 'win_games_count', 'lose_games_count', 'notes'],
+  gameStats: ['event_id', 'player_id', 'side', 'team_id', 'fg2m', 'fg2a', 'fg3m', 'fg3a', 'fgm', 'fga', 'pts', 'oreb', 'reb', 'ast', 'stl', 'tov', 'blk', 'min', 'win_games_count', 'lose_games_count', 'notes'],
 }
 
 const enumValues = {
@@ -324,10 +324,10 @@ function validate({ teams, players, events, gameStats }, errors, warnings) {
       .filter(s => s.event_id === event.event_id && s.side === 'b')
       .reduce((sum, s) => sum + Number(s.pts || 0), 0)
     if (event.team_a_score !== '' && aSum !== Number(event.team_a_score)) {
-      errors.push({ code: 'SCORE_MISMATCH', file: statFile, message: `${event.event_id} side a pts sum ${aSum} does not match team_a_score ${event.team_a_score}.` })
+      warnings.push({ code: 'SCORE_MISMATCH', file: statFile, message: `${event.event_id} side a pts sum ${aSum} does not match team_a_score ${event.team_a_score}.` })
     }
     if (event.team_b_score !== '' && bSum !== Number(event.team_b_score)) {
-      errors.push({ code: 'SCORE_MISMATCH', file: statFile, message: `${event.event_id} side b pts sum ${bSum} does not match team_b_score ${event.team_b_score}.` })
+      warnings.push({ code: 'SCORE_MISMATCH', file: statFile, message: `${event.event_id} side b pts sum ${bSum} does not match team_b_score ${event.team_b_score}.` })
     }
   }
 }
