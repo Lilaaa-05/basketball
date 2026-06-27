@@ -4,7 +4,7 @@ export const lang = ref('zh')
 export const toggleLang = () => { lang.value = lang.value === 'zh' ? 'ja' : 'zh' }
 
 const zh = {
-  nav_matches: '比赛', nav_players: '球员', nav_rankings: '排行', nav_team: '球队',
+  nav_matches: '比赛', nav_training: '训练', nav_players: '球员', nav_rankings: '排行', nav_team: '球队',
   rnk_title: '数据排行榜',
   rnk_grp_avg: '场均', rnk_grp_pct: '命中率', rnk_grp_total: '总计',
   rnk_ppg: '场均得分', rnk_rpg: '场均篮板', rnk_apg: '场均助攻',
@@ -14,6 +14,9 @@ const zh = {
   rnk_pts: '总得分', rnk_reb: '总篮板', rnk_ast: '总助攻',
   rnk_games: '场', rnk_rank: '排名',
   matches_title: '比赛记录',
+  training_title: '训练记录',
+  training_old_title: '过往训练',
+  training_no_data: '暂无训练记录',
   players_title: '球员名单',
   players_mode_avg: '场均',
   players_mode_per48: '每48分钟',
@@ -60,6 +63,7 @@ const zh = {
   rc_pts: '得分', rc_reb: '篮板', rc_ast: '助攻',
   rc_rank: '排名',
   stat_appearances: '场出场', match_th_player: '球员', match_basic: '基本统计',
+  match_stat_metric: '指标',
   match_watch_video: '观看录像',
   loading: 'Loading...', no_data: '暂无比赛记录',
   no_players: '暂无球员数据', no_player: '球员不存在',
@@ -137,7 +141,7 @@ const zh = {
 }
 
 const ja = {
-  nav_matches: '試合', nav_players: '選手', nav_rankings: 'ランキング', nav_team: 'チーム',
+  nav_matches: '試合', nav_training: '練習', nav_players: '選手', nav_rankings: 'ランキング', nav_team: 'チーム',
   rnk_title: 'スタッツランキング',
   rnk_grp_avg: '平均', rnk_grp_pct: '成功率', rnk_grp_total: '合計',
   rnk_ppg: '平均得点', rnk_rpg: '平均リバウンド', rnk_apg: '平均アシスト',
@@ -147,6 +151,9 @@ const ja = {
   rnk_pts: '合計得点', rnk_reb: '合計リバウンド', rnk_ast: '合計アシスト',
   rnk_games: '試合', rnk_rank: 'ランク',
   matches_title: '試合記録',
+  training_title: '練習記録',
+  training_old_title: '過去の練習',
+  training_no_data: '練習記録なし',
   players_title: '選手名簿',
   players_mode_avg: '平均',
   players_mode_per48: '48分換算',
@@ -193,6 +200,7 @@ const ja = {
   rc_pts: '得点', rc_reb: 'リバウンド', rc_ast: 'アシスト',
   rc_rank: '順位',
   stat_appearances: '試合出場', match_th_player: '選手', match_basic: '基本スタッツ',
+  match_stat_metric: '指標',
   match_watch_video: '録画中継',
   loading: '読み込み中...', no_data: '試合記録なし',
   no_players: '選手データなし', no_player: '選手が見つかりません',

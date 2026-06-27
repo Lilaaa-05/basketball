@@ -147,6 +147,70 @@ export async function getMatchesViewData() {
   return { matches, players }
 }
 
+export async function getTrainingViewData() {
+  const dataset = await loadDataset()
+  const events = Object.values(dataset.eventsById ?? {})
+    .filter(event => event.eventType !== 'official_match' && event.displayGroup !== 'hidden')
+    .sort((a, b) => {
+      const dateCmp = String(b.eventDate).localeCompare(String(a.eventDate))
+      return dateCmp || String(b.eventId).localeCompare(String(a.eventId), undefined, { numeric: true })
+    })
+
+  const statsByEvent = new Map()
+  for (const stat of dataset.gameStats ?? []) {
+    if (!statsByEvent.has(stat.eventId)) statsByEvent.set(stat.eventId, [])
+    statsByEvent.get(stat.eventId).push(stat)
+  }
+
+  const trainings = events.map(event => {
+    const eventStats = statsByEvent.get(event.eventId) ?? []
+    const teamA = dataset.teamsById?.[event.teamAId]
+    const teamB = dataset.teamsById?.[event.teamBId]
+    const teamAPlayers = eventStats.filter(stat => stat.side === 'a').map(stat => stat.playerId)
+    const teamBPlayers = eventStats.filter(stat => stat.side === 'b').map(stat => stat.playerId)
+
+    return {
+      id: event.eventId,
+      date: event.eventDate,
+      label: event.title,
+      displayGroup: event.displayGroup,
+      team_a: {
+        name: teamA?.teamNameZh ?? event.teamAId,
+        score: event.teamAScore,
+        players: teamAPlayers,
+      },
+      team_b: {
+        name: teamB?.teamNameZh ?? event.teamBId,
+        score: event.teamBScore,
+        players: teamBPlayers,
+      },
+      result: event.winSide === 'a' ? 'team_a' : event.winSide === 'b' ? 'team_b' : 'draw',
+      mvp: event.mvpPlayerId,
+      videoUrl: event.videoUrl,
+    }
+  })
+
+  const gamesByPlayer = new Map()
+  for (const stat of dataset.gameStats ?? []) {
+    if (!gamesByPlayer.has(stat.playerId)) gamesByPlayer.set(stat.playerId, [])
+    gamesByPlayer.get(stat.playerId).push(toLegacyGameStat(stat))
+  }
+
+  const players = Object.values(dataset.playersById ?? {}).map(player => ({
+    id: player.playerId,
+    name: player.displayName,
+    nickname: player.nickname,
+    number: player.number,
+    position: player.position,
+    avatar: player.avatar,
+    isRosterMember: player.primaryTeamId === 'keepb',
+    playerType: player.primaryTeamId === 'keepb' ? 'keepb' : player.primaryTeamId === 'gbc' ? 'g.b.c.' : '',
+    games: gamesByPlayer.get(player.playerId) ?? [],
+  }))
+
+  return { trainings, players }
+}
+
 export async function getPlayersViewData() {
   const dataset = await loadDataset()
   const officialEventIds = new Set(

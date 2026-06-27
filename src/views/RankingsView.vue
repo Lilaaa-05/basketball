@@ -1,5 +1,5 @@
 <template>
-  <div class="page">
+  <div class="page rankings-page">
   
     <h1 class="section-header">{{ t('rnk_title') }}      
     <button class="rnk-pill rnk-p48" :class="{ active: per48 }" @click="per48 = !per48">{{ t('players_mode_per48') }}</button>
