@@ -441,6 +441,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { t, lang } from '../i18n.js'
+import { getMatchesViewData } from '../dataService.js'
 
 const baseUrl = import.meta.env.BASE_URL
 const matches = ref([])
@@ -451,8 +452,8 @@ const videoExpanded = ref(new Set())
 
 const showOldGames = ref(false)
 
-const recentMatches = computed(() => matches.value.filter(m => m.date >= '2026-06-14'))
-const oldMatches = computed(() => matches.value.filter(m => m.date < '2026-06-14'))
+const recentMatches = computed(() => matches.value.filter(m => m.displayGroup === 'latest'))
+const oldMatches = computed(() => matches.value.filter(m => m.displayGroup === 'old'))
 
 // Choose a match to show in the banner: prefer Game 6 if present, otherwise the most recent
 const bannerMatch = computed(() => {
@@ -484,9 +485,9 @@ function startAuto() {
 }
 
 onMounted(async () => {
-  const [mr, pr] = await Promise.all([fetch(import.meta.env.BASE_URL + 'data/matches.json'), fetch(import.meta.env.BASE_URL + 'data/players.json')])
-  matches.value = await mr.json()
-  players.value = await pr.json()
+  const data = await getMatchesViewData()
+  matches.value = data.matches
+  players.value = data.players
   loading.value = false
   startAuto()
 })

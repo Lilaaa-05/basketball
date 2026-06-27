@@ -1,0 +1,5 @@
+team_id,team_type,team_name_zh,team_name_ja,is_primary,notes
+keepb,main_club,雪谷火箭,雪谷ロケッツ,true,
+gbc,opponent,G.B.C.,G.B.C.,false,
+keepc,internal_group,雪谷火箭-A,雪谷ロケッツ-A,false,
+keepd,internal_group,雪谷火箭-B,雪谷ロケッツ-B,false,

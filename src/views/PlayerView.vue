@@ -238,7 +238,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { t } from '../i18n.js'
-import { isAllowed } from '../allowedPlayers.js'
+import { getPlayerViewData } from '../dataService.js'
 
 const baseUrl = import.meta.env.BASE_URL
 const route  = useRoute()
@@ -260,7 +260,7 @@ const overallNorm = ref([])
 const playerNorm = ref([])
 
 function computeHex() {
-  const playersList = allPlayers.value.filter(isAllowed)
+  const playersList = allPlayers.value.filter(isRankEligible)
   if (!playersList.length) {
     overallNorm.value = hexMetrics.map(() => 0)
     playerNorm.value = hexMetrics.map(() => 0)
@@ -333,10 +333,12 @@ function labelPos(i) {
 // (watch is attached after player/allPlayers are defined)
 const player = ref(null)
 const allPlayers = ref([])
-const allMatches = ref([])
+const eventsById = ref({})
+const allGameStats = ref([])
 const loading = ref(true)
 const tab = ref('avg')
 const per48 = ref(false)
+const matchLabels = ref({})
 
 function p48(val) {
   if (val == null) return '-'
@@ -345,10 +347,12 @@ function p48(val) {
 
 async function load() {
   loading.value = true
-  const res = await fetch(import.meta.env.BASE_URL + 'data/players.json')
-  const all = await res.json()
-  allPlayers.value = all
-  player.value = all.find(p => p.id === route.params.id) ?? null
+  const data = await getPlayerViewData(route.params.id)
+  allPlayers.value = data.allPlayers
+  player.value = data.player
+  eventsById.value = data.eventsById
+  allGameStats.value = data.gameStats
+  matchLabels.value = data.matchLabels
   loading.value = false
 }
 onMounted(load)
@@ -401,6 +405,14 @@ function avgDreb() {
   return (base * (per48.value ? 2 : 1)).toFixed(1)
 }
 
+function isRankEligible(p) {
+  return p?.primaryTeamId === 'keepb' && p?.isPublic && p?.playerStatus !== 'inactive'
+}
+
+function sameTeamStats(eventId, teamId) {
+  return allGameStats.value.filter(s => s.eventId === eventId && s.teamId === teamId)
+}
+
 function statValueForPlayer(p, metric) {
   const gs = p?.games
   if (!gs?.length) return null
@@ -450,14 +462,9 @@ function statValueForPlayer(p, metric) {
   if (metric === 'orebp') {
     let teamMiss = 0
     for (const g of gs) {
-      const match = allMatches.value.find(m => m.id === g.match_id)
-      if (!match) { teamMiss += (g.fga ?? 0) - (g.fgm ?? 0); continue }
-      const teamArr = match.team_a.players.includes(p.id) ? match.team_a.players : match.team_b.players
-      for (const tid of teamArr) {
-        const tp = allPlayers.value.find(x => x.id === tid)
-        if (!tp) continue
-        const tg = tp.games.find(x => x.match_id === g.match_id)
-        if (!tg) continue
+      const teamStats = sameTeamStats(g.match_id, g.teamId)
+      if (!teamStats.length) { teamMiss += (g.fga ?? 0) - (g.fgm ?? 0); continue }
+      for (const tg of teamStats) {
         teamMiss += (tg.fga ?? 0) - (tg.fgm ?? 0)
       }
     }
@@ -474,16 +481,13 @@ function statValueForPlayer(p, metric) {
     let myTeamOffEvents = 0  // 己方球队只 (USG%)
     let gameImpact = 0       // 全场双方 (PIE)
     for (const mid of matchIds) {
-      const match = allMatches.value.find(m => m.id === mid)
-      const myTeam = match
-        ? (match.team_a.players.includes(p.id) ? match.team_a.players : match.team_b.players)
-        : null
-      for (const q of allPlayers.value || []) {
-        const pg = (q.games || []).find(x => x.match_id === mid)
-        if (!pg) continue
+      const myGame = gs.find(g => g.match_id === mid)
+      const myTeamId = myGame?.teamId ?? null
+      const eventStats = allGameStats.value.filter(s => s.eventId === mid)
+      for (const pg of eventStats) {
         const pFga = pg.fga ?? 0, pFta = pg.fta ?? 0, pTov = pg.tov ?? 0
         const pPts = pg.pts ?? 0
-        if (!myTeam || myTeam.includes(q.id)) {
+        if (!myTeamId || pg.teamId === myTeamId) {
           myTeamOffEvents += (pFga + 0.44 * pFta + pTov)
         }
         const pImpact = pPts + (pg.fgm ?? 0) + (pg.fg3m ?? 0) + (pg.ftm ?? 0) + (pg.oreb ?? 0) + (pg.stl ?? 0) + (pg.blk ?? 0) + (pg.ast ?? 0) - ((pg.fga ?? 0) - (pg.fgm ?? 0)) - pTov
@@ -511,7 +515,7 @@ function statRank(metric) {
   if (targetVal == null) return '-'
 
   const entries = allPlayers.value
-    .filter(isAllowed)
+    .filter(isRankEligible)
     .map(p => ({ id: p.id, val: statValueForPlayer(p, metric) }))
     .filter(x => x.val != null)
     .sort((a, b) => b.val - a.val)
@@ -538,15 +542,9 @@ function playerAdvStats() {
   const ptsfgaNum = fga ? (sum('pts') / fga) : null
   let teamMissOreb = 0
   for (const g of gs) {
-    const match = allMatches.value.find(m => m.id === g.match_id)
-    if (!match) { teamMissOreb += (g.fga ?? 0) - (g.fgm ?? 0); continue }
-    const pid = player.value.id
-    const teamArr = match.team_a.players.includes(pid) ? match.team_a.players : match.team_b.players
-    for (const tid of teamArr) {
-      const tp = allPlayers.value.find(x => x.id === tid)
-      if (!tp) continue
-      const tg = tp.games.find(x => x.match_id === g.match_id)
-      if (!tg) continue
+    const teamStats = sameTeamStats(g.match_id, g.teamId)
+    if (!teamStats.length) { teamMissOreb += (g.fga ?? 0) - (g.fgm ?? 0); continue }
+    for (const tg of teamStats) {
       teamMissOreb += (tg.fga ?? 0) - (tg.fgm ?? 0)
     }
   }
@@ -564,16 +562,13 @@ function playerAdvStats() {
   let myTeamOffEvents = 0  // 己方球队 (USG%)
   let gameImpact = 0       // 全场双方 (PIE)
   for (const mid of matchIds) {
-    const match = allMatches.value.find(m => m.id === mid)
-    const myTeam = match
-      ? (match.team_a.players.includes(player.value.id) ? match.team_a.players : match.team_b.players)
-      : null
-    for (const q of allPlayers.value || []) {
-      const pg = (q.games || []).find(x => x.match_id === mid)
-      if (!pg) continue
+    const myGame = gs.find(g => g.match_id === mid)
+    const myTeamId = myGame?.teamId ?? null
+    const eventStats = allGameStats.value.filter(s => s.eventId === mid)
+    for (const pg of eventStats) {
       const pFga = pg.fga ?? 0, pFta = pg.fta ?? 0, pTov = pg.tov ?? 0
       const pPts = pg.pts ?? 0
-      if (!myTeam || myTeam.includes(q.id)) {
+      if (!myTeamId || pg.teamId === myTeamId) {
         myTeamOffEvents += (pFga + 0.44 * pFta + pTov)
       }
       const pImpact = pPts + (pg.fgm ?? 0) + (pg.fg3m ?? 0) + (pg.ftm ?? 0) + (pg.oreb ?? 0) + (pg.stl ?? 0) + (pg.blk ?? 0) + (pg.ast ?? 0) - ((pFga - (pg.fgm ?? 0)) || 0) - pTov
@@ -611,12 +606,5 @@ function total(key) {
   if (!gs?.length) return 0
   return gs.reduce((a, g) => a + (g[key] ?? 0), 0)
 }
-const matchLabels = {}
-onMounted(async () => {
-  const mr = await fetch(import.meta.env.BASE_URL + 'data/matches.json')
-  const ms = await mr.json()
-  ms.forEach(m => { matchLabels[m.id] = m.label || m.id })
-  allMatches.value = ms
-})
-function matchLabel(id) { return matchLabels[id] || id }
+function matchLabel(id) { return matchLabels.value[id] || id }
 </script>

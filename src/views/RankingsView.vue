@@ -53,19 +53,20 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { t, lang } from '../i18n.js'
-import { isAllowed } from '../allowedPlayers.js'
+import { t } from '../i18n.js'
+import { getRankingsViewData } from '../dataService.js'
 
 const loading = ref(true)
 const players = ref([])
-const matches = ref([])
+const eventsById = ref({})
+const gameStats = ref([])
 const per48 = ref(false)
 
 onMounted(async () => {
-  const res = await fetch(import.meta.env.BASE_URL + 'data/players.json')
-  players.value = await res.json()
-  const mr = await fetch(import.meta.env.BASE_URL + 'data/matches.json')
-  matches.value = await mr.json()
+  const data = await getRankingsViewData()
+  players.value = data.players
+  eventsById.value = data.eventsById
+  gameStats.value = data.gameStats
   loading.value = false
 })
 
@@ -134,16 +135,13 @@ function computeStats(p) {
   let myTeamOffEvents = 0  // 己方球队 (USG%)
   let gameImpact = 0       // 全场双方 (PIE)
   for (const mid of matchIds) {
-    const match = matches.value.find(m => m.id === mid)
-    const myTeam = match
-      ? (match.team_a.players.includes(p.id) ? match.team_a.players : match.team_b.players)
-      : null
-    for (const oth of players.value) {
-      const og = (oth.games || []).find(x => x.match_id === mid)
-      if (!og) continue
+    const myGame = g.find(x => x.match_id === mid)
+    const myTeamId = myGame?.teamId ?? null
+    const eventStats = gameStats.value.filter(x => x.eventId === mid)
+    for (const og of eventStats) {
       const ofga = og.fga || 0, ofta = og.fta || 0, otov = og.tov || 0
       const opts = og.pts || 0
-      if (!myTeam || myTeam.includes(oth.id)) {
+      if (!myTeamId || og.teamId === myTeamId) {
         myTeamOffEvents += (ofga + 0.44 * ofta + otov)
       }
       const oimpact = opts + (og.fgm || 0) + (og.fg3m || 0) + (og.ftm || 0) + (og.oreb || 0) + (og.stl || 0) + (og.blk || 0) + (og.ast || 0) - ((ofga - (og.fgm || 0)) || 0) - otov
@@ -176,14 +174,9 @@ function computeStats(p) {
     orebp:  (function() {
       let teamMiss = 0
       for (const gm of g) {
-        const match = matches.value.find(m => m.id === gm.match_id)
-        if (!match) { teamMiss += (gm.fga || 0) - (gm.fgm || 0); continue }
-        const teamArr = match.team_a.players.includes(p.id) ? match.team_a.players : match.team_b.players
-        for (const tid of teamArr) {
-          const tp = players.value.find(x => x.id === tid)
-          if (!tp) continue
-          const tg = tp.games.find(x => x.match_id === gm.match_id)
-          if (!tg) continue
+        const eventStats = gameStats.value.filter(x => x.eventId === gm.match_id && x.teamId === gm.teamId)
+        if (!eventStats.length) { teamMiss += (gm.fga || 0) - (gm.fgm || 0); continue }
+        for (const tg of eventStats) {
           teamMiss += (tg.fga || 0) - (tg.fgm || 0)
         }
       }
@@ -199,12 +192,7 @@ function computeStats(p) {
   }
 }
 
-function isRosterMember(player) {
-  if (player.playerType) return player.playerType === 'keepb'
-  return player.isRosterMember !== false
-}
-
-const allStats = computed(() => players.value.filter(p => isRosterMember(p) && isAllowed(p)).map(computeStats).filter(Boolean))
+const allStats = computed(() => players.value.map(computeStats).filter(Boolean))
 
 const ranked = computed(() => {
   const def = currentStatDef.value
