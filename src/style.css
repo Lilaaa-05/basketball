@@ -1079,6 +1079,24 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--border);
   background: var(--surface2);
 }
+.gc-video-only-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--surface2);
+}
+.gc-video-only-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.gc-video-only-title .gc-round {
+  color: var(--text-2);
+  overflow-wrap: anywhere;
+}
 .gc-round {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 11px;

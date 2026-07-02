@@ -1,7 +1,7 @@
 {
   "meta": {
     "schemaVersion": 1,
-    "generatedAt": "2026-06-25T16:19:23.229Z",
+    "generatedAt": "2026-07-02T14:57:29.104Z",
     "source": {
       "teams": "data/source/teams.csv",
       "players": "data/source/players.csv",
@@ -11,7 +11,7 @@
     "recordCounts": {
       "teams": 4,
       "players": 22,
-      "events": 9,
+      "events": 10,
       "gameStats": 104
     }
   },
@@ -666,7 +666,7 @@
       "eventType": "fun_fullcourt_match",
       "sideMode": "two_sides",
       "title": "4v4 Fullcourt Game 1",
-      "displayGroup": "latest",
+      "displayGroup": "old",
       "teamAId": "keepc",
       "teamAScore": 36,
       "teamBId": "keepd",
@@ -682,7 +682,7 @@
       "eventType": "fun_fullcourt_match",
       "sideMode": "two_sides",
       "title": "4v4 Fullcourt Game 2(Partial Data)",
-      "displayGroup": "latest",
+      "displayGroup": "old",
       "teamAId": "keepc",
       "teamAScore": 43,
       "teamBId": "keepd",
@@ -698,7 +698,7 @@
       "eventType": "fun_fullcourt_match",
       "sideMode": "two_sides",
       "title": "4v4 Fullcourt Game 3(Only One Quator)",
-      "displayGroup": "latest",
+      "displayGroup": "old",
       "teamAId": "keepc",
       "teamAScore": 8,
       "teamBId": "keepd",
@@ -706,6 +706,22 @@
       "winSide": "b",
       "mvpPlayerId": "chai",
       "videoUrl": "https://youtu.be/-1uVNXDVeDo",
+      "notes": ""
+    },
+    "t4": {
+      "eventId": "t4",
+      "eventDate": "2026-06-28",
+      "eventType": "fun_fullcourt_match",
+      "sideMode": "multi_sides",
+      "title": "Mix Fullcourt Training (10 Games)",
+      "displayGroup": "latest",
+      "teamAId": "",
+      "teamAScore": null,
+      "teamBId": "",
+      "teamBScore": null,
+      "winSide": "",
+      "mvpPlayerId": "",
+      "videoUrl": "https://youtu.be/TcA40KanUuc",
       "notes": ""
     }
   },
@@ -3143,7 +3159,8 @@
       "g6",
       "t1",
       "t2",
-      "t3"
+      "t3",
+      "t4"
     ],
     "gameStatsByEventId": {
       "g1": [

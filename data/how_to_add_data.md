@@ -120,6 +120,13 @@
 6. 核对每队：同一 `event_id` 下 A 方 `pts` 总和应等于 `team_a_score`，B 方 `pts` 总和应等于 `team_b_score`。
 7. 运行 `npm run build`，如果有错误或警告，根据终端提示修正 CSV。
 
+## 只上架录像、没有技术统计的活动
+
+- 如果某个活动只是发布录像，不记录比分和球员技术统计，可以只在 `events.csv` 新增活动行，不在 `game_stats.csv` 添加对应行。
+- 这种情况下页面会自动识别为“仅录像”活动卡片：只显示标题和“观看录像”按钮，不展示比分、球员榜、Box Score 和高级统计。
+- 这类活动仍然需要填写 `event_id`、`event_date`、`event_type`、`title`、`display_group`、`video_url` 等基础信息。
+- 如果完全没有分队比分，建议使用 `side_mode=multi_sides` 或 `individual`，这样可以只保留活动基础信息和录像链接。
+
 ## 展示与统计口径提醒
 
 - `official_match` 会进入正式比赛统计，包括球员列表、排名、球员详情和球队页。
