@@ -1,5 +1,21 @@
 <template>
   <div class="gc">
+    <div v-if="!hasBoxScore(event)" class="gc-video-only-header">
+      <div class="gc-video-only-title">
+        <span class="gc-round">{{ event.label }}</span>
+        <span class="gc-date">{{ event.date }}</span>
+      </div>
+      <button
+        v-if="hasVideo(event)"
+        class="gc-expand-btn"
+        :class="{ active: videoExpanded }"
+        @click="$emit('toggle-video', event.id)"
+      >
+        {{ t('match_watch_video') }} <span class="gc-expand-arrow">▾</span>
+      </button>
+    </div>
+
+    <template v-else>
     <div class="gc-header">
       <div>
         <span class="gc-round">{{ event.label }}</span>
@@ -66,6 +82,7 @@
         </div>
       </div>
     </div>
+    </template>
 
     <Transition name="slide">
       <div v-if="videoExpanded && hasVideo(event)" class="gc-video">
@@ -82,7 +99,7 @@
     </Transition>
 
     <Transition name="slide">
-      <div v-if="expanded" class="gc-box">
+      <div v-if="expanded && hasBoxScore(event)" class="gc-box">
         <div class="gc-box-team-label">{{ teamName(event.team_a.name) }}</div>
         <div class="gc-table-scroll">
         <table class="gc-box-table">
@@ -248,6 +265,10 @@ function youtubeId(url) {
 
 function hasVideo(event) {
   return !!youtubeId(event?.videoUrl)
+}
+
+function hasBoxScore(event) {
+  return event?.hasBoxScore !== false
 }
 
 const fp = id => props.players.find(p => p.id === id)

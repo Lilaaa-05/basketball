@@ -110,6 +110,7 @@ export async function getMatchesViewData() {
       date: event.eventDate,
       label: event.title,
       displayGroup: event.displayGroup,
+      hasBoxScore: eventStats.length > 0,
       team_a: {
         name: teamA?.teamNameZh ?? event.teamAId,
         score: event.teamAScore,
@@ -174,6 +175,7 @@ export async function getTrainingViewData() {
       date: event.eventDate,
       label: event.title,
       displayGroup: event.displayGroup,
+      hasBoxScore: eventStats.length > 0,
       team_a: {
         name: teamA?.teamNameZh ?? event.teamAId,
         score: event.teamAScore,
