@@ -5,6 +5,7 @@ g3,2026-05-31,official_match,two_sides,Game 3,old,keepb,46,gbc,33,a,g,https://yo
 g4,2026-05-31,official_match,two_sides,Game 4,old,keepb,27,gbc,22,a,g,https://youtu.be/WzyqcwSryoQ,
 g5,2026-06-14,official_match,two_sides,Game 5,latest,keepb,33,gbc,27,a,g,https://youtu.be/9qgJ-rIFCgU,
 g6,2026-06-14,official_match,two_sides,Game 6,latest,keepb,26,gbc,33,b,feng,https://youtu.be/TbxW3NLmnHU,
-t1,2026-06-20,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 1,latest,keepc,36,keepd,36,draw,steven,https://youtu.be/_SDTcBDkZ_A
-t2,2026-06-20,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 2(Partial Data),latest,keepc,43,keepd,41,a,liao,https://youtu.be/urrCsmUdi2M
-t3,2026-06-20,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 3(Only One Quator),latest,keepc,8,keepd,16,b,chai,https://youtu.be/-1uVNXDVeDo
+t1,2026-06-20,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 1,old,keepc,36,keepd,36,draw,steven,https://youtu.be/_SDTcBDkZ_A,
+t2,2026-06-20,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 2(Partial Data),old,keepc,43,keepd,41,a,liao,https://youtu.be/urrCsmUdi2M,
+t3,2026-06-20,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 3(Only One Quator),old,keepc,8,keepd,16,b,chai,https://youtu.be/-1uVNXDVeDo,
+t4,2026-06-28,fun_fullcourt_match,multi_sides,Mix Fullcourt Training (10 Games),latest,,,,,,,https://youtu.be/TcA40KanUuc,
