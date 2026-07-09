@@ -133,10 +133,10 @@ const zh = {
   ai_player_insight_assister: '{name}是球队组织核心，场均 {apg} 次助攻调动全队。建议赋予其更多组织权，通过传导激活其他球员。',
   ai_summary_champion: '雪谷火箭以 {wpct}% 的胜率高居榜首，进攻火力充沛，防守同样稳固。球队当前状态正佳，需要在保持体系的同时打磨细节，向总冠军冲击。',
   latest_label: '最新战报',
-  latest_title: '救火队员率领G.B.C残阵拿下赛季首胜',
-  latest_sub: '第6场 · 2026赛季',
+  latest_title: '年薪5000万，真香！T-MAC复出一节打花爸爸',
+  latest_sub: '第8场 · 2026赛季',
   news_label: '球迷热议',
-  news_title: '队内最高薪0出场，雪火是否还需要T-MAC？',
+  news_title: '美高归来14投1中惨败雪火，爸爸新援是不是最大水货？',
   news_sub: '球迷讨论 · 2026赛季',
 }
 
@@ -269,10 +269,10 @@ const ja = {
   ai_player_insight_assister: '{name} は司令塔で平均 {apg} アシストを記録しています。組織力を任せ、パスで他者を活かしましょう。',
   ai_summary_champion: '雪ロケットは {wpct}% の勝率で首位に立っています。攻撃力が充実し守備も安定しています。現状は好調で、体系を維持しつつ細部を磨きつつチャンピオンを目指しましょう。',
   latest_label: '最新戦報',
-  latest_title: '救世主がG.B.Cの残存戦力を牽引し、今季初白星を獲得',
-  latest_sub: '第6戦 · 2026シーズン',
+  latest_title: '最高年俸5000万円とか安すぎるだろ！T-MAC、1Qだけでパパチームをボコボコに。',
+  latest_sub: '第8戦 · 2026シーズン',
   news_label: 'ファンの議論',
-  news_title: 'チーム最高年俸が出場ゼロ。雪ロケットにT-MACはまだ必要か？',
+  news_title: '米高校帰り、1/14で雪火に完敗。パパの新戦力、今季最大のハズレじゃないか？',
   news_sub: 'ファンディスカッション · 2026シーズン',
 }
 
