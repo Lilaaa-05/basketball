@@ -81,6 +81,7 @@ const groups = [
 const statsByGroup = {
   avg: [
     { key: 'ppg',  labelKey: 'rnk_ppg',  fmt: 'dec', asc: false },
+    { key: 'fg3mpg', labelKey: 'rnk_fg3mpg', fmt: 'dec', asc: false },
     { key: 'rpg',  labelKey: 'rnk_rpg',  fmt: 'dec', asc: false },
     { key: 'orebpg', labelKey: 'rnk_orebpg', fmt: 'dec', asc: false },
     { key: 'apg',  labelKey: 'rnk_apg',  fmt: 'dec', asc: false },
@@ -95,6 +96,7 @@ const statsByGroup = {
   ],
   total: [
     { key: 'pts', labelKey: 'rnk_pts', fmt: 'int', asc: false },
+    { key: 'fg3m', labelKey: 'rnk_fg3m', fmt: 'int', asc: false },
     { key: 'reb', labelKey: 'rnk_reb', fmt: 'int', asc: false },
     { key: 'ast', labelKey: 'rnk_ast', fmt: 'int', asc: false },
   ],
@@ -159,6 +161,7 @@ function computeStats(p) {
     position: p.position,
     n,
     ppg:    (sum('pts') / n) * scale,
+    fg3mpg: (sum('fg3m') / n) * scale,
     rpg:    (sum('reb') / n) * scale,
     apg:    (sum('ast') / n) * scale,
     spg:    (sum('stl') / n) * scale,
@@ -184,6 +187,7 @@ function computeStats(p) {
     })(),
     def:    ((sum('stl') + sum('blk')) / n) * scale,
     pts: sum('pts'),
+    fg3m: sum('fg3m'),
     reb: sum('reb'),
     orebpg: (sum('oreb') / n) * scale,
     ast: sum('ast'),
