@@ -6,40 +6,27 @@
     <div class="mpb-carousel-wrap">
       <div class="mpb-carousel" ref="carousel" @scroll.passive="onScroll">
 
-        <!-- slide 1 -->
+        <!-- slide 1: latest news -->
         <div class="mpb-slide">
           <div class="mpb-photo-wrap">
-            <img :src="baseUrl + 'pic/match/game3.png'" class="mpb-photo-img" alt="Game 3" />
-            <!-- score overlay -->
-            <div class="mpb-score-overlay" v-if="bannerMatch">
-              <div class="mpb-so-team">
-                <span class="mpb-so-name">{{ teamName(bannerMatch.team_a.name) }}</span>
-                <span class="mpb-so-score" :class="{ winner: bannerMatch.team_a.score > bannerMatch.team_b.score }">{{ bannerMatch.team_a.score }}</span>
-              </div>
-              <span class="mpb-so-sep">—</span>
-              <div class="mpb-so-team mpb-so-team--b">
-                <span class="mpb-so-score" :class="{ winner: bannerMatch.team_b.score > bannerMatch.team_a.score }">{{ bannerMatch.team_b.score }}</span>
-                <span class="mpb-so-name">{{ teamName(bannerMatch.team_b.name) }}</span>
-              </div>
-              <span class="mpb-so-final">FINAL</span>
-            </div>
-            <div class="mpb-photo-caption">
-              <span class="mpb-label">{{ t('latest_label') }}</span>
-              <div class="mpb-title">{{ t('latest_title') }}</div>
-              <span class="mpb-sub">{{ t('latest_sub') }}</span>
-            </div>
+            <img :src="baseUrl + 'pic/news/20260816_news_01.png'" class="mpb-photo-img" alt="Latest news" />
+          </div>
+          <div class="mpb-news-caption">
+            <span class="mpb-label">{{ t('latest_label') }}</span>
+            <div class="mpb-title">{{ t('latest_title') }}</div>
+            <span class="mpb-sub">{{ t('latest_sub') }}</span>
           </div>
         </div>
 
-        <!-- slide 2: localized fan discussion -->
+        <!-- slide 2: fan discussion -->
         <div class="mpb-slide">
-          <div class="mpb-photo-wrap mpb-photo-wrap--news">
-            <div class="mpb-news-emoji">🗣️</div>
-            <div class="mpb-photo-caption">
-              <span class="mpb-label mpb-label--gold">{{ t('news_label') }}</span>
-              <div class="mpb-title mpb-title--gold">{{ t('news_title') }}</div>
-              <span class="mpb-sub">{{ t('news_sub') }}</span>
-            </div>
+          <div class="mpb-photo-wrap">
+            <img :src="baseUrl + 'pic/news/20260816_news_02.png'" class="mpb-photo-img" alt="Fan discussion" />
+          </div>
+          <div class="mpb-news-caption">
+            <span class="mpb-label mpb-label--gold">{{ t('news_label') }}</span>
+            <div class="mpb-title mpb-title--gold">{{ t('news_title') }}</div>
+            <span class="mpb-sub">{{ t('news_sub') }}</span>
           </div>
         </div>
 
@@ -518,12 +505,6 @@ const showOldGames = ref(false)
 
 const recentMatches = computed(() => matches.value.filter(m => m.displayGroup === 'latest'))
 const oldMatches = computed(() => matches.value.filter(m => m.displayGroup === 'old'))
-
-// Choose a match to show in the banner: prefer Game 6 if present, otherwise the most recent
-const bannerMatch = computed(() => {
-  const g6 = matches.value.find(m => (m.label || '').toString().toLowerCase().includes('game 6') || m.id === 'game6')
-  return g6 || recentMatches.value[0] || null
-})
 
 const carousel = ref(null)
 const activeSlide = ref(0)

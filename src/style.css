@@ -241,7 +241,7 @@ a { color: inherit; text-decoration: none; }
 .mpb-photo-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
   background: #000;
   display: flex;
   justify-content: center;
@@ -251,7 +251,15 @@ a { color: inherit; text-decoration: none; }
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+}
+.mpb-news-caption {
+  padding: 14px 16px 16px;
+  background: #06102b;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 106px;
 }
 
 /* score overlay */
@@ -1824,7 +1832,22 @@ a { color: inherit; text-decoration: none; }
     max-width: 100%;
   }
   .mpb-photo-wrap {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
+  }
+  .mpb-news-caption {
+    padding: 12px 14px 14px;
+    min-height: 0;
+    gap: 4px;
+  }
+  .mpb-news-caption .mpb-title {
+    font-size: 20px;
+    line-height: 1.18;
+    letter-spacing: .5px;
+    animation: none;
+    filter: none;
+  }
+  .mpb-news-caption .mpb-sub {
+    font-size: 11px;
   }
   .gc-wrap,
   .gc {
