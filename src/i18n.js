@@ -133,10 +133,10 @@ const zh = {
   ai_player_insight_assister: '{name}是球队组织核心，场均 {apg} 次助攻调动全队。建议赋予其更多组织权，通过传导激活其他球员。',
   ai_summary_champion: '雪谷火箭以 {wpct}% 的胜率高居榜首，进攻火力充沛，防守同样稳固。球队当前状态正佳，需要在保持体系的同时打磨细节，向总冠军冲击。',
   latest_label: '最新战报',
-  latest_title: '致敬约基奇，金鸡独立压哨三分绝杀！！',
+  latest_title: 'T-mac走出低迷，化身空切小王子，率队斩获连胜！！',
   latest_sub: '8月MVP镜头 · 2026赛季',
   news_label: '球迷热议',
-  news_title: '22投2中，场馆方面正在计划起诉T-Mac',
+  news_title: '怒吼摘板酿成“交通事故”，交警随即送上罚单',
   news_sub: '球迷讨论 · 2026赛季',
 }
 
@@ -269,10 +269,10 @@ const ja = {
   ai_player_insight_assister: '{name} は司令塔で平均 {apg} アシストを記録しています。組織力を任せ、パスで他者を活かしましょう。',
   ai_summary_champion: '雪ロケットは {wpct}% の勝率で首位に立っています。攻撃力が充実し守備も安定しています。現状は好調で、体系を維持しつつ細部を磨きつつチャンピオンを目指しましょう。',
   latest_label: '最新戦報',
-  latest_title: 'ヨキッチに捧ぐ！片足立ちの劇的ブザービーター3P！',
+  latest_title: 'T-Mac、スランプ脱出！“カットイン王子”に変身し、チームを連勝へ導く',
   latest_sub: '8月MVPシーン · 2026シーズン',
   news_label: 'ファンの議論',
-  news_title: '22本中2本…会場側、T-Macを提訴へ　「ゴールを壊された」',
+  news_title: '雄叫びリバウンドからまさかの“交通事故”　警官が反則切符',
   news_sub: 'ファンディスカッション · 2026シーズン',
 }
 
