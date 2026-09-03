@@ -9,7 +9,7 @@
         <!-- slide 1: latest news -->
         <div class="mpb-slide">
           <div class="mpb-photo-wrap">
-            <img :src="baseUrl + 'pic/news/20260816_news_01.png'" class="mpb-photo-img" alt="Latest news" />
+            <img :src="baseUrl + 'pic/news/20260830_news_01.png'" class="mpb-photo-img" alt="Latest news" />
           </div>
           <div class="mpb-news-caption">
             <span class="mpb-label">{{ t('latest_label') }}</span>
@@ -21,7 +21,25 @@
         <!-- slide 2: fan discussion -->
         <div class="mpb-slide">
           <div class="mpb-photo-wrap">
-            <img :src="baseUrl + 'pic/news/20260816_news_02.png'" class="mpb-photo-img" alt="Fan discussion" />
+            <video
+              ref="newsVideo"
+              :src="baseUrl + 'pic/news/20260830_news_02.mp4'"
+              class="mpb-photo-img"
+              autoplay
+              muted
+              loop
+              playsinline
+              @volumechange="newsVideoMuted = $event.target.muted"
+              aria-label="Fan discussion highlight video"
+            ></video>
+            <button
+              type="button"
+              class="mpb-video-sound-btn"
+              :aria-label="newsVideoMuted ? '开启视频声音' : '关闭视频声音'"
+              @click="toggleNewsVideoSound"
+            >
+              {{ newsVideoMuted ? '🔇 开启声音' : '🔊 关闭声音' }}
+            </button>
           </div>
           <div class="mpb-news-caption">
             <span class="mpb-label mpb-label--gold">{{ t('news_label') }}</span>
@@ -507,7 +525,9 @@ const recentMatches = computed(() => matches.value.filter(m => m.displayGroup ==
 const oldMatches = computed(() => matches.value.filter(m => m.displayGroup === 'old'))
 
 const carousel = ref(null)
+const newsVideo = ref(null)
 const activeSlide = ref(0)
+const newsVideoMuted = ref(true)
 const SLIDE_COUNT = 2
 let autoTimer = null
 
@@ -522,11 +542,17 @@ function goToSlide(idx) {
   carousel.value.scrollTo({ left: idx * carousel.value.offsetWidth, behavior: 'smooth' })
 }
 
+function toggleNewsVideoSound() {
+  if (!newsVideo.value) return
+  newsVideo.value.muted = !newsVideo.value.muted
+  newsVideoMuted.value = newsVideo.value.muted
+}
+
 function startAuto() {
   autoTimer = setInterval(() => {
     const next = (activeSlide.value + 1) % SLIDE_COUNT
     goToSlide(next)
-  }, 10000)
+  }, 15000)
 }
 
 onMounted(async () => {
