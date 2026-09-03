@@ -30,8 +30,18 @@
               loop
               playsinline
               @volumechange="newsVideoMuted = $event.target.muted"
+              @play="newsVideoPaused = false"
+              @pause="newsVideoPaused = true"
               aria-label="Fan discussion highlight video"
             ></video>
+            <button
+              type="button"
+              class="mpb-video-control-btn"
+              :aria-label="newsVideoPaused ? '播放视频' : '暂停视频'"
+              @click="toggleNewsVideoPlayback"
+            >
+              {{ newsVideoPaused ? '▶ 播放' : '❚❚ 暂停' }}
+            </button>
             <button
               type="button"
               class="mpb-video-sound-btn"
@@ -528,6 +538,7 @@ const carousel = ref(null)
 const newsVideo = ref(null)
 const activeSlide = ref(0)
 const newsVideoMuted = ref(true)
+const newsVideoPaused = ref(true)
 const SLIDE_COUNT = 2
 let autoTimer = null
 
@@ -546,6 +557,15 @@ function toggleNewsVideoSound() {
   if (!newsVideo.value) return
   newsVideo.value.muted = !newsVideo.value.muted
   newsVideoMuted.value = newsVideo.value.muted
+}
+
+function toggleNewsVideoPlayback() {
+  if (!newsVideo.value) return
+  if (newsVideo.value.paused) {
+    newsVideo.value.play().catch(() => {})
+  } else {
+    newsVideo.value.pause()
+  }
 }
 
 function startAuto() {
