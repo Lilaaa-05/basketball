@@ -40,7 +40,7 @@
               :aria-label="newsVideoPaused ? '播放视频' : '暂停视频'"
               @click="toggleNewsVideoPlayback"
             >
-              {{ newsVideoPaused ? '▶ 播放' : '❚❚ 暂停' }}
+              {{ newsVideoPaused ? '▶' : '❚❚' }}
             </button>
             <button
               type="button"
@@ -48,7 +48,7 @@
               :aria-label="newsVideoMuted ? '开启视频声音' : '关闭视频声音'"
               @click="toggleNewsVideoSound"
             >
-              {{ newsVideoMuted ? '🔇 开启声音' : '🔊 关闭声音' }}
+              {{ newsVideoMuted ? '🔇' : '🔊' }}
             </button>
           </div>
           <div class="mpb-news-caption">
