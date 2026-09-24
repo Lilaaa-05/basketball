@@ -2,69 +2,28 @@
   <div class="page matches-page">
     <div class="section-header">{{ t('matches_title') }}</div>
 
-    <!-- latest match photo banner -->
-    <div class="mpb-carousel-wrap">
-      <div class="mpb-carousel" ref="carousel" @scroll.passive="onScroll">
-
-        <!-- slide 1: latest news -->
-        <div class="mpb-slide">
-          <div class="mpb-photo-wrap">
-            <img :src="baseUrl + 'pic/news/20260830_news_01.png'" class="mpb-photo-img" alt="Latest news" />
+    <section class="headline-news" :class="{ 'is-expanded': headlineExpanded }" :aria-label="t('headline_label')">
+      <div class="headline-news__accent" aria-hidden="true">NEWS</div>
+      <div class="headline-news__content">
+        <span class="headline-news__label">{{ t('headline_label') }}</span>
+        <h2 class="headline-news__title">{{ t('headline_title') }}</h2>
+        <Transition name="headline-expand">
+          <div v-if="headlineExpanded" id="headline-news-body" class="headline-news__body">
+            <p v-for="(paragraph, index) in headlineParagraphs" :key="index">{{ paragraph }}</p>
           </div>
-          <div class="mpb-news-caption">
-            <span class="mpb-label">{{ t('latest_label') }}</span>
-            <div class="mpb-title">{{ t('latest_title') }}</div>
-            <span class="mpb-sub">{{ t('latest_sub') }}</span>
-          </div>
-        </div>
-
-        <!-- slide 2: fan discussion -->
-        <div class="mpb-slide">
-          <div class="mpb-photo-wrap">
-            <video
-              ref="newsVideo"
-              :src="baseUrl + 'pic/news/20260830_news_02.mp4'"
-              class="mpb-photo-img"
-              autoplay
-              muted
-              loop
-              playsinline
-              @volumechange="newsVideoMuted = $event.target.muted"
-              @play="newsVideoPaused = false"
-              @pause="newsVideoPaused = true"
-              aria-label="Fan discussion highlight video"
-            ></video>
-            <button
-              type="button"
-              class="mpb-video-control-btn"
-              :aria-label="newsVideoPaused ? '播放视频' : '暂停视频'"
-              @click="toggleNewsVideoPlayback"
-            >
-              {{ newsVideoPaused ? '▶' : '❚❚' }}
-            </button>
-            <button
-              type="button"
-              class="mpb-video-sound-btn"
-              :aria-label="newsVideoMuted ? '开启视频声音' : '关闭视频声音'"
-              @click="toggleNewsVideoSound"
-            >
-              {{ newsVideoMuted ? '🔇' : '🔊' }}
-            </button>
-          </div>
-          <div class="mpb-news-caption">
-            <span class="mpb-label mpb-label--gold">{{ t('news_label') }}</span>
-            <div class="mpb-title mpb-title--gold">{{ t('news_title') }}</div>
-            <span class="mpb-sub">{{ t('news_sub') }}</span>
-          </div>
-        </div>
-
+        </Transition>
       </div>
-
-      <!-- dot indicators -->
-      <div class="mpb-dots">
-        <span v-for="i in SLIDE_COUNT" :key="i" class="mpb-dot" :class="{ active: activeSlide === (i-1) }"></span>
-      </div>
-    </div>
+      <button
+        type="button"
+        class="headline-news__toggle"
+        :aria-expanded="headlineExpanded"
+        :aria-controls="'headline-news-body'"
+        @click="headlineExpanded = !headlineExpanded"
+      >
+        {{ headlineExpanded ? t('headline_collapse') : t('headline_expand') }}
+        <span aria-hidden="true">{{ headlineExpanded ? '↑' : '↓' }}</span>
+      </button>
+    </section>
 
     <div v-if="loading" class="loading">{{ t('loading') }}</div>
     <div v-else-if="!matches.length" class="empty">{{ t('no_data') }}</div>
@@ -517,74 +476,30 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { t, lang } from '../i18n.js'
 import { getMatchesViewData } from '../dataService.js'
 
-const baseUrl = import.meta.env.BASE_URL
 const matches = ref([])
 const players = ref([])
 const loading = ref(true)
 const expanded = ref(new Set())
 const videoExpanded = ref(new Set())
+const headlineExpanded = ref(false)
 
 const showOldGames = ref(false)
 
 const recentMatches = computed(() => matches.value.filter(m => m.displayGroup === 'latest'))
 const oldMatches = computed(() => matches.value.filter(m => m.displayGroup === 'old'))
 
-const carousel = ref(null)
-const newsVideo = ref(null)
-const activeSlide = ref(0)
-const newsVideoMuted = ref(true)
-const newsVideoPaused = ref(true)
-const SLIDE_COUNT = 2
-let autoTimer = null
-
-function onScroll() {
-  if (!carousel.value) return
-  const idx = Math.round(carousel.value.scrollLeft / carousel.value.offsetWidth)
-  activeSlide.value = idx
-}
-
-function goToSlide(idx) {
-  if (!carousel.value) return
-  carousel.value.scrollTo({ left: idx * carousel.value.offsetWidth, behavior: 'smooth' })
-}
-
-function toggleNewsVideoSound() {
-  if (!newsVideo.value) return
-  newsVideo.value.muted = !newsVideo.value.muted
-  newsVideoMuted.value = newsVideo.value.muted
-}
-
-function toggleNewsVideoPlayback() {
-  if (!newsVideo.value) return
-  if (newsVideo.value.paused) {
-    newsVideo.value.play().catch(() => {})
-  } else {
-    newsVideo.value.pause()
-  }
-}
-
-function startAuto() {
-  autoTimer = setInterval(() => {
-    const next = (activeSlide.value + 1) % SLIDE_COUNT
-    goToSlide(next)
-  }, 15000)
-}
+const headlineParagraphs = computed(() => t('headline_body').split('\n'))
 
 onMounted(async () => {
   const data = await getMatchesViewData()
   matches.value = data.matches
   players.value = data.players
   loading.value = false
-  startAuto()
-})
-
-onUnmounted(() => {
-  clearInterval(autoTimer)
 })
 
 function toggle(id) {
@@ -752,4 +667,13 @@ function valueClass(value) {
 .slide-enter-active, .slide-leave-active { transition: max-height .22s ease, opacity .2s ease; overflow: hidden; }
 .slide-enter-from, .slide-leave-to { max-height: 0; opacity: 0; }
 .slide-enter-to, .slide-leave-from { max-height: 1200px; opacity: 1; }
+
+.headline-expand-enter-active,
+.headline-expand-leave-active { transition: grid-template-rows .28s ease, opacity .2s ease; display: grid; overflow: hidden; }
+.headline-expand-enter-from,
+.headline-expand-leave-to { grid-template-rows: 0fr; opacity: 0; }
+.headline-expand-enter-to,
+.headline-expand-leave-from { grid-template-rows: 1fr; opacity: 1; }
+.headline-expand-enter-active > *,
+.headline-expand-leave-active > * { min-height: 0; }
 </style>
