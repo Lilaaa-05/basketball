@@ -9,11 +9,17 @@ t1,2026-06-20,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 1,old,keepc,36,ke
 t2,2026-06-20,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 2(Partial Data),old,keepc,43,keepd,41,a,liao,https://youtu.be/urrCsmUdi2M,
 t3,2026-06-20,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 3(Only One Quator),old,keepc,8,keepd,16,b,chai,https://youtu.be/-1uVNXDVeDo,
 t4,2026-06-28,fun_fullcourt_match,multi_sides,Mix Fullcourt Training (10 Games),old,,,,,,,https://youtu.be/TcA40KanUuc,
-g7,2026-07-05,official_match,two_sides,Game 7,latest,keepb,35,gbc,15,a,feng,https://youtu.be/_k3_g17tGMg,
-g8,2026-07-05,official_match,two_sides,Game 8,latest,keepb,39,gbc,23,a,g,https://youtu.be/n9E0HgkeAk4,
+g7,2026-07-05,official_match,two_sides,Game 7,old,keepb,35,gbc,15,a,feng,https://youtu.be/_k3_g17tGMg,
+g8,2026-07-05,official_match,two_sides,Game 8,old,keepb,39,gbc,23,a,g,https://youtu.be/n9E0HgkeAk4,
 t5,2026-07-05,fun_fullcourt_match,two_sides,KeepB vs G.B.C. Game3(Only One Quator),old,keepb,14,gbc,8,a,harada,https://youtu.be/949Smo8STDM,
 t6,2026-08-02,fun_fullcourt_match,multi_sides,EbaraHiratsuka 5v5 Highlight,old,,,,,,,https://youtu.be/MwHDBXLB1XI,
 t7,2026-08-16,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 1,old,keepc,43,keepd,40,a,chai,https://youtu.be/N8EhCa-Jpqc,
 t8,2026-08-16,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 2,old,keepc,41,keepd,47,b,harada,https://youtu.be/F1dnAb1Hoe8,
 t9,2026-08-16,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 3(Two Quators),old,keepc,30,keepd,18,a,zuan,https://youtu.be/0WqPWCvYrps,
-t10,2026-08-30,fun_fullcourt_match,multi_sides,EbaraHiratsuka 5v5 Highlight,latest,,,,,,,https://youtu.be/0xQtdrcAL5A
+t10,2026-08-30,fun_fullcourt_match,multi_sides,EbaraHiratsuka 5v5 Highlight,old,,,,,,,https://youtu.be/0xQtdrcAL5A
+t11,2026-09-18,halfcourt_game,multi_sides,3v3 Training Highlight,latest,,,,,,,https://youtu.be/CsLFHBcK8cM
+t12,2026-09-20,fun_fullcourt_match,multi_sides,5v5 Training Highlight,latest,,,,,,,https://youtu.be/2NDVHtyu-QQ
+t13,2026-09-22,halfcourt_game,multi_sides,3v3 WarmUp,latest,,,,,,,https://youtu.be/SGd7NseTWl4
+t14,2026-09-22,fun_fullcourt_match,two_sides,5v5 Fullcourt Game 3(Only 10mins),latest,keepb,13,gbc,20,b,gbc0,https://youtu.be/gfPKcfNKcMQ
+g9,2026-09-22,official_match,two_sides,Game 9,latest,keepb,28,gbc,36,b,boss,https://youtu.be/E6MTlXvk2GU
+g10,2026-09-22,official_match,two_sides,Game 10,latest,keepb,50,gbc,33,a,feng,https://youtu.be/uvYzak84Kx8
