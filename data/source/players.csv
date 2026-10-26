@@ -1,5 +1,5 @@
 ﻿player_id,display_name,nickname,number,position,primary_team_id,player_status,is_public,avatar,height,weight,joined,wingspan,standing_reach,school,contract,idol,mold,tags,honors,notes
-aoki,aoki,A,13,G,keepb,regular,true,,,,2026-01,,,,,,,,,
+aoki,aoki,A,13,G,keepb,regular,true,pic/aoki.png,,,2026-01,,,,,,,,,
 boss,boss,B,30,F,gbc,regular,false,,,,,,,,,,,,,
 chai,chai,C,96,F,keepb,regular,true,pic/chai.jpeg,,,2026-01,,,,,,,篮板痴汉,,
 daisuke,daisuke,D,24,F,gbc,regular,false,,,,,,,,,,,,,
@@ -27,3 +27,4 @@ xiaochuan,小川,XC,3,F,,guest,false
 lengmian,冷面,LM,80,G,,guest,false
 mama2,mama2号,MM,25,G,gbc,regular,false
 hongkong,香港哥,HK,12,F,gbc,regular,false
+kevin,kevin,KV,88,F,,guest,false
