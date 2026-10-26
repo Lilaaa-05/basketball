@@ -17,9 +17,12 @@ t7,2026-08-16,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 1,old,keepc,43,ke
 t8,2026-08-16,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 2,old,keepc,41,keepd,47,b,harada,https://youtu.be/F1dnAb1Hoe8,
 t9,2026-08-16,fun_fullcourt_match,two_sides,4v4 Fullcourt Game 3(Two Quators),old,keepc,30,keepd,18,a,zuan,https://youtu.be/0WqPWCvYrps,
 t10,2026-08-30,fun_fullcourt_match,multi_sides,EbaraHiratsuka 5v5 Highlight,old,,,,,,,https://youtu.be/0xQtdrcAL5A
-t11,2026-09-18,halfcourt_game,multi_sides,3v3 Training Highlight,latest,,,,,,,https://youtu.be/CsLFHBcK8cM
-t12,2026-09-20,fun_fullcourt_match,multi_sides,5v5 Training Highlight,latest,,,,,,,https://youtu.be/2NDVHtyu-QQ
-t13,2026-09-22,halfcourt_game,multi_sides,3v3 WarmUp,latest,,,,,,,https://youtu.be/SGd7NseTWl4
-t14,2026-09-22,fun_fullcourt_match,two_sides,5v5 Fullcourt Game 3(Only 10mins),latest,keepb,13,gbc,20,b,gbc0,https://youtu.be/gfPKcfNKcMQ
-g9,2026-09-22,official_match,two_sides,Game 9,latest,keepb,28,gbc,36,b,boss,https://youtu.be/E6MTlXvk2GU
-g10,2026-09-22,official_match,two_sides,Game 10,latest,keepb,50,gbc,33,a,feng,https://youtu.be/uvYzak84Kx8
+t11,2026-09-18,halfcourt_game,multi_sides,3v3 Training Highlight,old,,,,,,,https://youtu.be/CsLFHBcK8cM
+t12,2026-09-20,fun_fullcourt_match,multi_sides,5v5 Training Highlight,old,,,,,,,https://youtu.be/2NDVHtyu-QQ
+t13,2026-09-22,halfcourt_game,multi_sides,3v3 WarmUp,old,,,,,,,https://youtu.be/SGd7NseTWl4
+t14,2026-09-22,fun_fullcourt_match,two_sides,5v5 Fullcourt Game 3(Only 10mins),old,keepb,13,gbc,20,b,gbc0,https://youtu.be/gfPKcfNKcMQ
+g9,2026-09-22,official_match,two_sides,Game 9,old,keepb,28,gbc,36,b,boss,https://youtu.be/E6MTlXvk2GU
+g10,2026-09-22,official_match,two_sides,Game 10,old,keepb,50,gbc,33,a,feng,https://youtu.be/uvYzak84Kx8
+g11,2026-10-18,official_match,two_sides,Game 11,latest,keepb,31,gbc,18,a,chai,https://youtu.be/W2hZI6Ur-EE
+g12,2026-10-18,official_match,two_sides,Game 12,latest,keepb,51,gbc,31,a,zuan,https://youtu.be/T1JJOMYiF08
+g13,2026-10-18,official_match,two_sides,Game 13,latest,keepb,42,gbc,31,a,feng,https://youtu.be/zQXj4Rmj378
